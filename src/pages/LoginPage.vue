@@ -27,6 +27,7 @@
             <font-awesome-icon :icon="showPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
           </span>
         </div>
+        <p v-if="errorMessage" class="error-message" >{{ errorMessage }}</p>
         <p class="forgot-password"><a href="#">Forgot password?</a></p>
         <button type="submit" class="login-button">Login</button>
         <p class="or-continue">or continue with</p>
@@ -39,21 +40,45 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       email: '',
       password: '',
       showPassword: false,
+      errorMessage: '', // for showing login error messages
     };
   },
   methods: {
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
-    handleSubmit() {
-      alert(`Logging in with ${this.email}`);
-      // Handle login logic here
+    async handleSubmit() {
+      try {
+        // Send a POST request to Strapi's authentication endpoint
+        const response = await axios.post('http://localhost:1337/api/auth/local', {
+          identifier: this.email, // Strapi expects the field to be called "identifier"
+          password: this.password,
+        });
+
+        // Extract the JWT and user info
+        const { jwt, user } = response.data;
+
+        // Store the JWT token in localStorage for future requests
+        localStorage.setItem('jwt', jwt);
+
+        // Redirect user or perform additional actions (e.g., navigating to dashboard)
+        this.$router.push('/home');
+      } catch (error) {
+        // Handle error
+        if (error.response && error.response.data && error.response.data.error) {
+          this.errorMessage = error.response.data.error.message;
+        } else {
+          this.errorMessage = 'An error occurred. Please try again.';
+        }
+      }
     },
   },
 };
@@ -248,6 +273,9 @@ h3 {
 
 .google-button:hover {
   background-color: #d3d3d3;
+}
+.error-message {
+  color: rgb(255, 33, 33);
 }
 
 </style>

@@ -1,21 +1,6 @@
 <template>
   <div class="home-page">
-    <header class="header">
-      <div>
-        <img src="@/assets/logo.png" alt="EasyMiles" style="width: 220px;" />
-        <div class="input-container">
-          <font-awesome-icon :icon="['fas', 'magnifying-glass']" style="color: #E0E0E0;" />
-          <input type="text" placeholder="Search something here..." class="search-bar" />
-        </div>
-      </div>
-      <nav class="nav-icons" style="color: white;">
-        <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
-        <font-awesome-icon :icon="['fas', 'cart-shopping']" class="icon" />
-        <font-awesome-icon :icon="['fas', 'gear']" class="icon" />
-        <font-awesome-icon :icon="['fas', 'user']" class="icon" />
-      </nav>
-    </header>
-
+    <Header />
     <section class="hero-section">
       <div class="hero-card">
         <div>
@@ -79,54 +64,21 @@
       </div>
       <button class="show-more-btn">Show more car</button>
     </section>
+    <Footer />
 
-    <footer class="footer">
-      <div class="footer-up">
-        <div class="footer-info">
-          <h4>EasyMiles</h4>
-          <p>Our vision is to provide convenience and help increase your sales business.</p>
-        </div>
-        <div class="footer-links">
-          <div class="links-section">
-            <h5>About</h5>
-            <ul>
-              <li>How it works</li>
-              <li>Featured</li>
-              <li>Partnership</li>
-              <li>Business Relation</li>
-            </ul>
-          </div>
-          <div class="links-section">
-            <h5>Community</h5>
-            <ul>
-              <li>Events</li>
-              <li>Blog</li>
-              <li>Podcast</li>
-              <li>Invite a friend</li>
-            </ul>
-          </div>
-          <div class="links-section">
-            <h5>Socials</h5>
-            <ul>
-              <li>Discord</li>
-              <li>Instagram</li>
-              <li>Twitter</li>
-              <li>Facebook</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <p class="footer-legal">©2024 EasyMiles. All rights reserved | Privacy & Policy | Terms & Condition</p>
-    </footer>
   </div>
 </template>
 
 <script>
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
 import CarCard from '@/components/CarCard.vue'; // Import the CarCard component
 
 export default {
   components: {
     CarCard,
+    Header,
+    Footer,
   },
   data() {
     return {
@@ -162,59 +114,6 @@ export default {
   font-family: 'Poppins', sans-serif;
   background-color: #121212;
   color: #ffffff;
-}
-
-/* Header */
-.header {
-  max-height: 120px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 50px;
-  border-bottom: 1px solid #2e2e2e;
-}
-
-.nav-icons .icon {
-  font-size: 25px;
-  border: 1px solid gray;
-  border-radius: 50%;
-  padding: 10px;
-  cursor: pointer;
-  color: #E0E0E0;
-}
-
-.header img {
-  margin-right: 50px;
-  width: 220px;
-}
-
-.header div {
-  display: flex;
-  align-items: center;
-}
-
-.input-container {
-  display: flex;
-  align-items: center;
-  background-color: #1e1e1e;
-  border-radius: 25px;
-  padding: 10px 20px;
-  border: 1px solid #3e3e3e;
-}
-
-.search-bar {
-  background: none;
-  border: none;
-  outline: none;
-  color: #e0e0e0;
-  padding: 0 10px;
-  width: 300px;
-  font-size: 16px;
-}
-
-.nav-icons {
-  display: flex;
-  gap: 20px;
 }
 
 /* Hero Section */
@@ -328,37 +227,4 @@ export default {
   display: block;
 }
 
-/* Footer */
-.footer {
-  padding: 30px 100px;
-  background-color: #1c1c1c;
-  color: #e0e0e0;
-  font-size: 14px;
-}
-
-.footer-up {
-  display: flex;
-  justify-content: space-between;
-}
-
-.footer-info h4 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.footer-links {
-  display: flex;
-  gap: 50px;
-}
-
-.links-section h5 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.footer-legal {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
-}
 </style>
