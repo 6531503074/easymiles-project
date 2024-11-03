@@ -13,32 +13,37 @@
       <div class="content">
         <!-- Sidebar Section -->
         <aside class="sidebar">
-          <div class="filter-section">
-            <h3>Type</h3>
-            <ul>
-              <li>Sport (10)</li>
-              <li>SUV (12)</li>
-              <li>MPV (16)</li>
-              <li>Sedan (20)</li>
-              <li>Coupe (14)</li>
-              <li>Hatchback (14)</li>
-            </ul>
-          </div>
-          <div class="filter-section">
-            <h3>Capacity</h3>
-            <ul>
-              <li>2 Person</li>
-              <li>4 Person</li>
-              <li>6 Person</li>
-              <li>8 or More</li>
-            </ul>
-          </div>
-          <div class="filter-section">
-            <h3>Price</h3>
-            <input type="range" min="0" max="100" />
-            <p>Max: $100.00</p>
-          </div>
-        </aside>
+  <div class="filter-section">
+    <h3>Type</h3>
+    <ul>
+      <li v-for="(item, index) in types" :key="index">
+        <label>
+          <input type="checkbox" v-model="selectedTypes" :value="item.name" />
+          {{ item.name }} ({{ item.count }})
+        </label>
+      </li>
+    </ul>
+  </div>
+
+  <div class="filter-section">
+    <h3>Capacity</h3>
+    <ul>
+      <li v-for="(capacity, index) in capacities" :key="index">
+        <label>
+          <input type="checkbox" v-model="selectedCapacities" :value="capacity.name" />
+          {{ capacity.name }} ({{ capacity.count }})
+        </label>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="filter-section">
+    <h3>Price</h3>
+    <input type="range" min="0" max="100" v-model="maxPrice" />
+    <p>Max: ${{ maxPrice }}</p>
+  </div>
+</aside>
+
   
         <!-- Main Content Section -->
         <div class="main-content">
@@ -79,26 +84,34 @@
   
   <script>
   export default {
-    data() {
-      return {
-        cars: [
-          { id: 1, name: 'Koenigsegg', type: 'Sport', price: 99, image: 'car1.jpg' },
-          { id: 2, name: 'Nissan GT-R', type: 'Sport', price: 80, image: 'car2.jpg' },
-          { id: 3, name: 'Rolls-Royce', type: 'Sport', price: 96, image: 'car3.jpg' },
-          { id: 4, name: 'All New Rush', type: 'SUV', price: 72, image: 'car4.jpg' },
-          { id: 5, name: 'CR - V', type: 'SUV', price: 80, image: 'car5.jpg' },
-          { id: 6, name: 'All New Terios', type: 'SUV', price: 74, image: 'car6.jpg' },
-          { id: 7, name: 'MG ZX Exclusive', type: 'Hatchback', price: 76, image: 'car7.jpg' },
-          { id: 8, name: 'New MGZS', type: 'SUV', price: 80, image: 'car8.jpg' },
-        ]
-      }
-    },
-    methods: {
-      formatCurrency(value) {
-        return `$${value.toFixed(2)}`;
-      }
+  data() {
+    return {
+      types: [
+        { name: 'Sport', count: 10 },
+        { name: 'SUV', count: 12 },
+        { name: 'MPV', count: 16 },
+        { name: 'Sedan', count: 20 },
+        { name: 'Coupe', count: 14 },
+        { name: 'Hatchback', count: 14 },
+      ],
+      capacities: [
+        { name: '2 Person', count: 10 },
+        { name: '4 Person', count: 12 },
+        { name: '6 Person', count: 14 },
+        { name: '8 or More', count: 16 },
+      ],
+      selectedTypes: [],
+      selectedCapacities: [],
+      maxPrice: 100
+    };
+  },
+  methods: {
+    formatCurrency(value) {
+      return `$${value.toFixed(2)}`;
     }
   }
+};
+
   </script>
   
   <style scoped>
