@@ -24,24 +24,23 @@
           <label for="username">Create User name</label>
           <input type="text" id="username" placeholder="Create a user name" v-model="username" required />
         </div>
-        <div class="input-group">
-          <label for="contact">Contact number</label>
-          <input type="text" id="contact" placeholder="Enter your contact number" v-model="contact" required />
-        </div>
         <div class="input-group password-group">
           <label for="password">Password</label>
-          <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password" placeholder="Enter your password" required />
+          <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password"
+            placeholder="Enter your password" required />
           <span class="eye-icon" @click="togglePassword">
             <font-awesome-icon :icon="showPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
           </span>
         </div>
         <div class="input-group password-group">
           <label for="confirm-password">Confirm Password</label>
-          <input :type="showPassword ? 'text' : 'password'" id="confirm-password" v-model="confirmPassword" placeholder="Confirm your password" required />
-          <span class="eye-icon" @click="togglePassword">
-            <font-awesome-icon :icon="showPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
+          <input :type="showConfirmPassword ? 'text' : 'password'" id="confirm-password" v-model="confirmPassword"
+            placeholder="Confirm your password" required />
+          <span class="eye-icon" @click="toggleConfirmPassword">
+            <font-awesome-icon :icon="showConfirmPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']" />
           </span>
         </div>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <button type="submit" class="register-button">Register</button>
         <p class="or-continue">or continue with</p>
         <div class="social-login">
@@ -55,24 +54,67 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       email: '',
       username: '',
-      contact: '',
       password: '',
       confirmPassword: '',
       showPassword: false,
+      showConfirmPassword: false,
+      errorMessage: '', // To show error messages
     };
   },
   methods: {
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
-    handleSubmit() {
-      alert(`Registered with email: ${this.email}`);
-      // Handle the form submission logic here
+    toggleConfirmPassword() {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    },
+    async handleSubmit() {
+      // Check if password and confirm password match
+      if (this.password !== this.confirmPassword) {
+        this.errorMessage = "Passwords don't match";
+        return;
+      }
+
+      try {
+        console.log({
+          username: this.username,
+          email: this.email,
+          password: this.password,
+          contact: this.contact,
+        });
+        // Send a POST request to Strapi's register endpoint
+        const response = await axios.post('http://localhost:1337/api/auth/local/register', {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
+
+
+
+        // Handle successful registration
+        const { jwt, user } = response.data;
+
+        // Optionally, store JWT token for authentication
+        localStorage.setItem('jwt', jwt);
+
+        // Redirect the user or show success message
+        alert(`Registration successful! Welcome, ${user.username}`);
+        this.$router.push('/'); // Redirect to the login or home page
+      } catch (error) {
+        // Handle errors (e.g., user already exists)
+        if (error.response && error.response.data && error.response.data.error) {
+          this.errorMessage = error.response.data.error.message;
+        } else {
+          this.errorMessage = 'An error occurred. Please try again.';
+        }
+      }
     },
   },
 };
@@ -137,7 +179,7 @@ export default {
 
 .car img {
   width: 90%;
-  padding-left:300px;
+  padding-left: 300px;
 }
 
 .right-section {
@@ -252,5 +294,11 @@ export default {
 .login-info a {
   color: #1a73e8;
   text-decoration: none;
+}
+
+.error-message {
+  color: rgb(255, 33, 33);
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 </style>
