@@ -4,7 +4,13 @@ import SignUpPage from './pages/SignUpPage.vue';
 import HomePage from './pages/HomePage.vue';
 import CatePage from './pages/CategoryPage.vue';
 import DetailPage from './pages/DetailPage.vue';
+import EditProfilePage from './pages/EditProfilePage.vue';
 const routes = [
+  {
+    path: '/EditProfilePage',
+    name: 'EditProfilePage',
+    component: EditProfilePage,
+  },
   {
     path: '/',
     name: 'Login',
