@@ -9,10 +9,10 @@
         </div>
       </div>
       <nav class="nav-icons" style="color: white;">
-        <font-awesome-icon :icon="['fas', 'heart']" class="icon"/>
-        <font-awesome-icon :icon="['fas', 'cart-shopping']" class="icon"/>
-        <font-awesome-icon :icon="['fas', 'gear']" class="icon"/>
-        <font-awesome-icon :icon="['fas', 'user']" class="icon"/>
+        <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
+        <font-awesome-icon :icon="['fas', 'cart-shopping']" class="icon" />
+        <font-awesome-icon :icon="['fas', 'gear']" class="icon" />
+        <font-awesome-icon :icon="['fas', 'user']" class="icon" />
       </nav>
     </header>
 
@@ -38,20 +38,30 @@
     <section class="search-section">
       <div class="search-card">
         <h4>Pick-Up</h4>
-        <select>
-          <option>Select your city</option>
+        <select v-model="pickupCity">
+          <option value="">Select your city</option>
+          <option value="new-york">New York</option>
+          <option value="los-angeles">Los Angeles</option>
+          <option value="chicago">Chicago</option>
+          <option value="houston">Houston</option>
+          <option value="phoenix">Phoenix</option>
         </select>
-        <input type="date" />
-        <input type="time" />
+        <input type="date" v-model="pickupDate" />
+        <input type="time" v-model="pickupTime" />
       </div>
-      <button class="swap-btn">↔</button>
+      <button class="swap-btn" @click="swapValues">↔</button>
       <div class="search-card">
         <h4>Drop-Off</h4>
-        <select>
-          <option>Select your city</option>
+        <select v-model="dropoffCity">
+          <option value="">Select your city</option>
+          <option value="new-york">New York</option>
+          <option value="los-angeles">Los Angeles</option>
+          <option value="chicago">Chicago</option>
+          <option value="houston">Houston</option>
+          <option value="phoenix">Phoenix</option>
         </select>
-        <input type="date" />
-        <input type="time" />
+        <input type="date" v-model="dropoffDate" />
+        <input type="time" v-model="dropoffTime" />
       </div>
     </section>
 
@@ -71,37 +81,39 @@
     </section>
 
     <footer class="footer">
-      <div class="footer-info">
-        <h4>EasyMiles</h4>
-        <p>Our vision is to provide convenience and help increase your sales business.</p>
-      </div>
-      <div class="footer-links">
-        <div class="links-section">
-          <h5>About</h5>
-          <ul>
-            <li>How it works</li>
-            <li>Featured</li>
-            <li>Partnership</li>
-            <li>Business Relation</li>
-          </ul>
+      <div class="footer-up">
+        <div class="footer-info">
+          <h4>EasyMiles</h4>
+          <p>Our vision is to provide convenience and help increase your sales business.</p>
         </div>
-        <div class="links-section">
-          <h5>Community</h5>
-          <ul>
-            <li>Events</li>
-            <li>Blog</li>
-            <li>Podcast</li>
-            <li>Invite a friend</li>
-          </ul>
-        </div>
-        <div class="links-section">
-          <h5>Socials</h5>
-          <ul>
-            <li>Discord</li>
-            <li>Instagram</li>
-            <li>Twitter</li>
-            <li>Facebook</li>
-          </ul>
+        <div class="footer-links">
+          <div class="links-section">
+            <h5>About</h5>
+            <ul>
+              <li>How it works</li>
+              <li>Featured</li>
+              <li>Partnership</li>
+              <li>Business Relation</li>
+            </ul>
+          </div>
+          <div class="links-section">
+            <h5>Community</h5>
+            <ul>
+              <li>Events</li>
+              <li>Blog</li>
+              <li>Podcast</li>
+              <li>Invite a friend</li>
+            </ul>
+          </div>
+          <div class="links-section">
+            <h5>Socials</h5>
+            <ul>
+              <li>Discord</li>
+              <li>Instagram</li>
+              <li>Twitter</li>
+              <li>Facebook</li>
+            </ul>
+          </div>
         </div>
       </div>
       <p class="footer-legal">©2024 EasyMiles. All rights reserved | Privacy & Policy | Terms & Condition</p>
@@ -124,7 +136,22 @@ export default {
       recommendedCars: [
         // Add your car data for recommended cars
       ],
+      // New data properties for Pick-Up and Drop-Off
+      pickupCity: '',
+      pickupDate: '',
+      pickupTime: '',
+      dropoffCity: '',
+      dropoffDate: '',
+      dropoffTime: '',
     };
+  },
+  methods: {
+    swapValues() {
+      // Swap the values of Pick-Up and Drop-Off
+      [this.pickupCity, this.dropoffCity] = [this.dropoffCity, this.pickupCity];
+      [this.pickupDate, this.dropoffDate] = [this.dropoffDate, this.pickupDate];
+      [this.pickupTime, this.dropoffTime] = [this.dropoffTime, this.pickupTime];
+    },
   },
 };
 </script>
@@ -258,11 +285,6 @@ export default {
   margin-top: 5px;
 }
 
-.search-card input[type="date"]::webkit-calendar-picker-indicator,
-.search-card input[type="time"]::webkit-calendar-picker-indicator {
-  filter: invert(1);
-}
-
 .search-card select,
 .search-card input {
   background-color: #1e1e1e;
@@ -271,6 +293,7 @@ export default {
   padding: 8px;
   border-radius: 5px;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .swap-btn {
@@ -280,7 +303,7 @@ export default {
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-}
+} 
 
 /* Car Cards Section */
 .popular-cars,
@@ -307,12 +330,15 @@ export default {
 
 /* Footer */
 .footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 30px 50px;
+  padding: 30px 100px;
   background-color: #1c1c1c;
   color: #e0e0e0;
   font-size: 14px;
+}
+
+.footer-up {
+  display: flex;
+  justify-content: space-between;
 }
 
 .footer-info h4 {
