@@ -92,7 +92,7 @@ html {
   width: 100%;
   height: 100%;
   font-family: 'Poppins', sans-serif;
-  background-color: #1B1B1B;
+  background-color: #121212;
 }
 </style>
 
@@ -104,7 +104,7 @@ html {
 }
 
 .container {
-  background-color: #1B1B1B;
+  background-color: #121212;
   display: flex;
   height: 100vh;
   box-sizing: border-box;

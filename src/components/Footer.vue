@@ -46,8 +46,9 @@ export default {};
 
 <style scoped>
 .footer {
+    border-top: 1px solid #2e2e2e;
     padding: 30px 100px;
-    background-color: #1c1c1c;
+    background-color: #121212;
     color: #e0e0e0;
     font-size: 14px;
 }
