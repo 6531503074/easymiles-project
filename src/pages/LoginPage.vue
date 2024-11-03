@@ -67,7 +67,7 @@ html {
   width: 100%;
   height: 100%;
   font-family: 'Poppins', sans-serif;
-  background-color: #111;
+  background-color: #1B1B1B;
 }
 </style>
 
@@ -79,7 +79,7 @@ html {
 }
 
 .container {
-  background-color: #111;
+  background-color: #1B1B1B;
   display: flex;
   height: 100vh;
   box-sizing: border-box;

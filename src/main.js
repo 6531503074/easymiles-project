@@ -1,12 +1,13 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library} from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faShoppingCart, faHeart, faUser, faGear, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faGoogle, faEye, faEyeSlash);
+
+library.add(faGoogle, faEye, faEyeSlash, faHeart, faShoppingCart, faUser, faGear, faMagnifyingGlass);
 
 const app = createApp(App);
 
