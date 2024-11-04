@@ -18,6 +18,7 @@
                 <font-awesome-icon :icon="['fas', 'circle-question']" class="icon" />
                 <h2>Help</h2>
             </div>
+            
         </div>
 
         <Footer />
