@@ -1,5 +1,5 @@
-<template class="Edit">
-    <div class="EditProfile-page">
+<template class="Security">
+    <div class="Security-page">
         <Header />
         <div class="box-container">
             <font-awesome-icon :icon="['fas', 'circle-user']" class="usericon" />
@@ -19,7 +19,7 @@
                 <h2>Help</h2>
             </div>
         </div>
-
+        <h2 class="security">Security</h2>
         <Footer />
     </div>
 </template>
@@ -95,5 +95,10 @@ export default {
     margin-top: -120px;
     margin-left: 100px;
     display: flex;
+}
+.security {
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    margin-left: 130px;
 }
 </style>
