@@ -48,6 +48,16 @@ const routes = [
     name: 'Detail',
     component: DetailPage, 
   },
+  {
+    path: '/payment',
+    name: 'Payment',
+    component: PaymentPage, 
+  },
+  {
+    path: '/favorite',
+    name: 'Favorite',
+    component: FavoritePage, 
+  },
 ];
 
 const router = createRouter({
