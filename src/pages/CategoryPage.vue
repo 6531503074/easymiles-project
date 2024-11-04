@@ -71,25 +71,28 @@
 
         <!-- Car Grid -->
         <div class="car-grid">
-          <div v-for="car in cars" :key="car.id" class="car-card">
-            <img :src="car.image" alt="Car Image" />
-            <div class="car-info">
-              <div class="car-header">
-                <h4>{{ car.name }}</h4>
-                <button class="favorite-btn">❤️</button>
-              </div>
-              <p>{{ car.type }}</p>
-              <div class="car-details">
-                <span>🚗 {{ car.capacity }}L</span>
-                <span>⚙️ {{ car.transmission }}</span>
-                <span>👥 {{ car.seats }} People</span>
-              </div>
-              <p class="car-price">{{ formatCurrency(car.price) }} / day</p>
-              <button class="rent-button">Rent Now</button>
-            </div>
-          </div>
-        </div>
-        <button class="show-more">Show more car</button>
+  <div v-for="car in cars" :key="car.id" class="car-card">
+    <img :src="car.image" alt="Car Image" />
+    <div class="car-info">
+      <div class="car-header">
+        <h4>{{ car.name }}</h4>
+        <button class="favorite-btn" @click="toggleFavorite(car)" :class="{ 'filled-heart': car.favorite }">
+          <span v-if="car.favorite">❤️</span>
+          <span v-else>🤍</span>
+        </button>
+      </div>
+      <p>{{ car.type }}</p>
+      <div class="car-details">
+        <span>🚗 {{ car.capacity }}L</span>
+        <span>⚙️ {{ car.transmission }}</span>
+        <span>👥 {{ car.seats }} People</span>
+      </div>
+      <p class="car-price">{{ formatCurrency(car.price) }} / day</p>
+      <button class="rent-button">Rent Now</button>
+    </div>
+  </div>
+</div>
+<button class="show-more">Show more car</button>
       </div>
     </div>
 
@@ -134,23 +137,26 @@ export default {
     };
   },
   methods: {
-    formatCurrency(value) {
-      return `$${value.toFixed(2)}`;
-    },
-    swapValues() {
-      const tempCity = this.pickupCity;
-      const tempDate = this.pickupDate;
-      const tempTime = this.pickupTime;
-      
-      this.pickupCity = this.dropoffCity;
-      this.pickupDate = this.dropoffDate;
-      this.pickupTime = this.dropoffTime;
-      
-      this.dropoffCity = tempCity;
-      this.dropoffDate = tempDate;
-      this.dropoffTime = tempTime;
-    }
+  formatCurrency(value) {
+    return `$${value.toFixed(2)}`;
   },
+  swapValues() {
+    const tempCity = this.pickupCity;
+    const tempDate = this.pickupDate;
+    const tempTime = this.pickupTime;
+
+    this.pickupCity = this.dropoffCity;
+    this.pickupDate = this.dropoffDate;
+    this.pickupTime = this.dropoffTime;
+
+    this.dropoffCity = tempCity;
+    this.dropoffDate = tempDate;
+    this.dropoffTime = tempTime;
+  },
+  toggleFavorite(car) {
+    car.favorite = !car.favorite;
+  },
+},
 };
 </script>
 
@@ -166,7 +172,7 @@ export default {
 }
 
 .sidebar {
-  width: 200px;
+  width: 250px;
   padding: 20px;
   background-color: #1f1f1f;
   border-right: 1px solid #333; 
@@ -221,7 +227,7 @@ export default {
 } 
 
 .car-grid {
-  display: flex;
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
   margin-top: 50px;
@@ -295,5 +301,17 @@ export default {
   color: #fff;
   border-radius: 5px;
   cursor: pointer;
+}
+.favorite-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  opacity: 0.5; 
+  transition: opacity 0.3s ease;
+}
+
+.favorite-btn.filled-heart {
+  opacity: 1; 
 }
 </style>
