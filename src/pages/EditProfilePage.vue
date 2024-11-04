@@ -18,7 +18,7 @@
                 <font-awesome-icon :icon="['fas', 'circle-question']" class="icon" />
                 <h2>Help</h2>
             </div>
-            
+
         </div>
 
         <Footer />
@@ -97,4 +97,5 @@ export default {
     margin-left: 100px;
     display: flex;
 }
+
 </style>
