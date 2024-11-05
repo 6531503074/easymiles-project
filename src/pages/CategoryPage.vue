@@ -1,89 +1,115 @@
 <template>
-    <div class="app-container">
-      <!-- Header Section -->
-      <header class="header">
-        <div class="logo">EasyMiles</div>
-        <input type="text" placeholder="Search something here" class="search-bar" />
-        <div class="icons">
-          <span class="icon">❤</span>
-          <span class="icon">👤</span>
-        </div>
-      </header>
-  
-      <div class="content">
-        <!-- Sidebar Section -->
-        <aside class="sidebar">
-  <div class="filter-section">
-    <h3>Type</h3>
-    <ul>
-      <li v-for="(item, index) in types" :key="index">
-        <label>
-          <input type="checkbox" v-model="selectedTypes" :value="item.name" />
-          {{ item.name }} ({{ item.count }})
-        </label>
-      </li>
-    </ul>
-  </div>
+  <div class="app-container">
+    <!-- Header Section -->
+    <Header />
 
-  <div class="filter-section">
-    <h3>Capacity</h3>
-    <ul>
-      <li v-for="(capacity, index) in capacities" :key="index">
-        <label>
-          <input type="checkbox" v-model="selectedCapacities" :value="capacity.name" />
-          {{ capacity.name }} ({{ capacity.count }})
-        </label>
-      </li>
-    </ul>
-  </div>
-  
-  <div class="filter-section">
-    <h3>Price</h3>
-    <input type="range" min="0" max="100" v-model="maxPrice" />
-    <p>Max: ${{ maxPrice }}</p>
-  </div>
-</aside>
-
-  
-        <!-- Main Content Section -->
-        <div class="main-content">
-          <!-- Search Filters -->
-          <div class="search-filters">
-            <div class="filter">
-              <select><option>Select Location</option></select>
-              <input type="date" placeholder="Select Date" />
-              <input type="time" placeholder="Select Time" />
-            </div>
-            <button class="sort-button">Sort</button>
-          </div>
-  
-          <!-- Car Grid -->
-          <div class="car-grid">
-            <div v-for="car in cars" :key="car.id" class="car-card">
-              <img :src="car.image" alt="Car Image" />
-              <div class="car-info">
-                <h4>{{ car.name }}</h4>
-                <p>{{ car.type }}</p>
-                <p>{{ formatCurrency(car.price) }} / day</p>
-                <button class="rent-button">Rent Now</button>
-              </div>
-            </div>
-          </div>
+    <div class="content">
+      <!-- Sidebar Section -->
+      <aside class="sidebar">
+        <div class="filter-section">
+          <h3>Type</h3>
+          <ul>
+            <li v-for="(item, index) in types" :key="index">
+              <label>
+                <input type="checkbox" v-model="selectedTypes" :value="item.name" />
+                {{ item.name }} ({{ item.count }})
+              </label>
+            </li>
+          </ul>
         </div>
+
+        <div class="filter-section">
+          <h3>Capacity</h3>
+          <ul>
+            <li v-for="(capacity, index) in capacities" :key="index">
+              <label>
+                <input type="checkbox" v-model="selectedCapacities" :value="capacity.name" />
+                {{ capacity.name }} ({{ capacity.count }})
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <div class="filter-section">
+          <h3>Price</h3>
+          <input type="range" min="0" max="100" v-model="maxPrice" />
+          <p>Max: ${{ maxPrice.toFixed(2) }}</p>
+        </div>
+      </aside>
+
+      <!-- Main Content Section -->
+      <div class="main-content">
+        <section class="search-section">
+          <div class="search-card">
+            <h4>Pick-Up</h4>
+            <select v-model="pickupCity">
+              <option value="">Select your city</option>
+              <option value="new-york">New York</option>
+              <option value="los-angeles">Los Angeles</option>
+              <option value="chicago">Chicago</option>
+              <option value="houston">Houston</option>
+              <option value="phoenix">Phoenix</option>
+            </select>
+            <input type="date" v-model="pickupDate" />
+            <input type="time" v-model="pickupTime" />
+          </div>
+          <button class="swap-btn" @click="swapValues">↔</button>
+          <div class="search-card">
+            <h4>Drop-Off</h4>
+            <select v-model="dropoffCity">
+              <option value="">Select your city</option>
+              <option value="new-york">New York</option>
+              <option value="los-angeles">Los Angeles</option>
+              <option value="chicago">Chicago</option>
+              <option value="houston">Houston</option>
+              <option value="phoenix">Phoenix</option>
+            </select>
+            <input type="date" v-model="dropoffDate" />
+            <input type="time" v-model="dropoffTime" />
+          </div>
+        </section>
+
+        <!-- Car Grid -->
+        <div class="car-grid">
+  <div v-for="car in cars" :key="car.id" class="car-card">
+    <img :src="car.image" alt="Car Image" />
+    <div class="car-info">
+      <div class="car-header">
+        <h4>{{ car.name }}</h4>
+        <button class="favorite-btn" @click="toggleFavorite(car)" :class="{ 'filled-heart': car.favorite }">
+          <span v-if="car.favorite">❤️</span>
+          <span v-else>🤍</span>
+        </button>
       </div>
-  
-      <!-- Footer Section -->
-      <footer class="footer">
-        <div>©2024 EasyMiles. All rights reserved</div>
-        <div>
-          <a href="#">Privacy & Policy</a> | <a href="#">Terms & Conditions</a>
-        </div>
-      </footer>
+      <p>{{ car.type }}</p>
+      <div class="car-details">
+        <span>🚗 {{ car.capacity }}L</span>
+        <span>⚙️ {{ car.transmission }}</span>
+        <span>👥 {{ car.seats }} People</span>
+      </div>
+      <p class="car-price">{{ formatCurrency(car.price) }} / day</p>
+      <button class="rent-button">Rent Now</button>
     </div>
-  </template>
-  
-  <script>
-  export default {
+  </div>
+</div>
+<button class="show-more">Show more car</button>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <Footer />
+  </div>
+</template>
+
+<script>
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+
+export default {
+  components: {
+    Header,
+    Footer,
+  },
   data() {
     return {
       types: [
@@ -102,138 +128,190 @@
       ],
       selectedTypes: [],
       selectedCapacities: [],
-      maxPrice: 100
+      maxPrice: 100,
+      cars: [
+        { id: 1, name: 'Koenigsegg', type: 'Sport', price: 99, capacity: 90, transmission: 'Manual', seats: 2, image: 'car1.jpg' },
+        { id: 2, name: 'Nissan GT-R', type: 'Sport', price: 80, capacity: 80, transmission: 'Manual', seats: 2, image: 'car2.jpg' },
+        // Add more car objects as needed
+      ],
     };
   },
   methods: {
-    formatCurrency(value) {
-      return `$${value.toFixed(2)}`;
-    }
-  }
-};
+  formatCurrency(value) {
+    return `$${value.toFixed(2)}`;
+  },
+  swapValues() {
+    const tempCity = this.pickupCity;
+    const tempDate = this.pickupDate;
+    const tempTime = this.pickupTime;
 
-  </script>
-  
-  <style scoped>
-  .app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #1e1e1e;
-    color: #ffffff;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: #333;
-    align-items: center;
-  }
-  
-  .logo {
-    font-size: 1.5rem;
-    color: #4a90e2;
-  }
-  
-  .search-bar {
-    flex-grow: 1;
-    margin: 0 1rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: none;
-  }
-  
-  .icons .icon {
-    margin-left: 1rem;
-    cursor: pointer;
-  }
-  
-  .content {
-    display: flex;
-    flex-grow: 1;
-  }
-  
-  .sidebar {
-    width: 250px;
-    background-color: #333;
-    padding: 1rem;
-    color: #fff;
-  }
-  
-  .filter-section h3 {
-    margin-top: 1rem;
-    font-size: 1.1rem;
-  }
-  
-  .filter-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0;
-  }
-  
-  .filter-section li {
-    margin: 0.3rem 0;
-  }
-  
-  .filter-section input[type="range"] {
-    width: 100%;
-  }
-  
-  .main-content {
-    padding: 1rem;
-    flex-grow: 1;
-  }
-  
-  .search-filters {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-  
-  .car-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-  
-  .car-card {
-    background-color: #444;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    color: #fff;
-  }
-  
-  .car-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-  }
-  
-  .car-info h4 {
-    margin: 0.5rem 0;
-  }
-  
-  .rent-button {
-    background-color: #4a90e2;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .footer {
-    background-color: #222;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-  }
-  
-  .footer a {
-    color: #4a90e2;
-    text-decoration: none;
-  }
-  </style>
-  
+    this.pickupCity = this.dropoffCity;
+    this.pickupDate = this.dropoffDate;
+    this.pickupTime = this.dropoffTime;
+
+    this.dropoffCity = tempCity;
+    this.dropoffDate = tempDate;
+    this.dropoffTime = tempTime;
+  },
+  toggleFavorite(car) {
+    car.favorite = !car.favorite;
+  },
+},
+};
+</script>
+
+<style scoped>
+.app-container {
+  font-family: Arial, sans-serif;
+  color: #f0f0f0;
+  background-color: #121212;
+}
+
+.content {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  padding: 20px;
+  background-color: #1f1f1f;
+  border-right: 1px solid #333; 
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  color: #f0f0f0;
+}
+
+.search-section {
+  display: flex;
+  gap: 20px;
+  padding: 20px 50px;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.search-card {
+  flex: 1;
+  color: #e0e0e0;
+  background-color: #1c1c1c;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: large;
+}
+
+.search-card h4 {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.search-card select,
+.search-card input {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 1px solid #3e3e3e;
+  padding: 8px;
+  border-radius: 5px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.swap-btn {
+  background-color: #2b2bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+} 
+
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 50px;
+}
+
+.car-card {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  padding: 15px;
+}
+
+.car-card:hover {
+  transform: scale(1.05);
+}
+
+.car-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #333;
+}
+
+.car-info {
+  padding: 10px 0;
+}
+
+.car-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.car-details {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 0.9em;
+}
+
+.car-price {
+  font-size: 1.1em;
+  margin-top: 5px;
+}
+
+.rent-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.show-more {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  border: none;
+  background-color: #2b2bff;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.favorite-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  opacity: 0.5; 
+  transition: opacity 0.3s ease;
+}
+
+.favorite-btn.filled-heart {
+  opacity: 1; 
+}
+</style>

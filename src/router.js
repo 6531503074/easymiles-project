@@ -4,6 +4,8 @@ import SignUpPage from './pages/SignUpPage.vue';
 import HomePage from './pages/HomePage.vue';
 import CatePage from './pages/CategoryPage.vue';
 import DetailPage from './pages/DetailPage.vue';
+import PaymentPage from './pages/PaymentPage.vue';
+import FavoritePage from './pages/FavoritePage.vue';
 const routes = [
   {
     path: '/',
@@ -29,6 +31,16 @@ const routes = [
     path: '/detail',
     name: 'Detail',
     component: DetailPage, 
+  },
+  {
+    path: '/payment',
+    name: 'Payment',
+    component: PaymentPage, 
+  },
+  {
+    path: '/favorite',
+    name: 'Favorite',
+    component: FavoritePage, 
   },
 ];
 
