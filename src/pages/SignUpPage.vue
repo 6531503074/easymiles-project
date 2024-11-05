@@ -90,7 +90,7 @@ export default {
           contact: this.contact,
         });
         // Send a POST request to Strapi's register endpoint
-        const response = await axios.post('http://localhost:1337/api/auth/local/register', {
+        const response = await axios.post('https://easymiles-server-app.onrender.com/api/auth/local/register', {
           username: this.username,
           email: this.email,
           password: this.password,

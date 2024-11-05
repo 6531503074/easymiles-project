@@ -58,7 +58,7 @@ export default {
     async handleSubmit() {
       try {
         // Send a POST request to Strapi's authentication endpoint
-        const response = await axios.post('http://localhost:1337/api/auth/local', {
+        const response = await axios.post('https://easymiles-server-app.onrender.com/api/auth/local', {
           identifier: this.email, // Strapi expects the field to be called "identifier"
           password: this.password,
         });

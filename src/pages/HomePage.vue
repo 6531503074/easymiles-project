@@ -51,19 +51,29 @@
     </section>
 
     <section class="popular-cars">
-      <h3>Popular Car</h3>
+      <div class="popular-header-cars">
+        <h3>Popular Car</h3>
+        <router-link to="/">view all</router-link>
+      </div>
       <div class="car-grid">
         <CarCard v-for="car in popularCars" :key="car.id" :car="car" />
       </div>
     </section>
 
     <section class="recommended-cars">
-      <h3>Recommendation Car</h3>
+      <div class="recommended-header-cars">
+        <h3>Recommendation Car</h3>
+        <router-link to="/">view all</router-link>
+      </div>
       <div class="car-grid">
         <CarCard v-for="car in recommendedCars" :key="car.id" :car="car" />
       </div>
-      <button class="show-more-btn">Show more car</button>
     </section>
+
+    <!-- Show More Button -->
+    <button v-if="recommendedCars.length < totalCars.length" class="show-more-btn" @click="showMoreCars">
+      Show more car
+    </button>
     <Footer />
 
   </div>
@@ -72,7 +82,8 @@
 <script>
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
-import CarCard from '@/components/CarCard.vue'; // Import the CarCard component
+import CarCard from '@/components/CarCard.vue';
+import axios from 'axios';
 
 export default {
   components: {
@@ -82,12 +93,11 @@ export default {
   },
   data() {
     return {
-      popularCars: [
-        // Add your car data for popular cars
-      ],
-      recommendedCars: [
-        // Add your car data for recommended cars
-      ],
+      totalCars: [],
+      popularCars: [],
+      recommendedCars: [],
+      displayRecommendedCount: 0, // Number of recommended cars to show initially
+      carsPerRow: 4,
       // New data properties for Pick-Up and Drop-Off
       pickupCity: '',
       pickupDate: '',
@@ -97,9 +107,63 @@ export default {
       dropoffTime: '',
     };
   },
+  mounted() {
+    this.fetchCarData();
+    this.updateCarsPerRow();
+    window.addEventListener('resize', this.updateCarsPerRow);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateCarsPerRow);
+  },
   methods: {
+    async fetchCarData() {
+      try {
+        const response = await axios.get('http://localhost:1337/api/cars?populate=*');
+        const cars = response.data.data;
+
+        // Assign all cars to totalCars
+        this.totalCars = cars;
+
+        // Update popular and recommended cars initially
+        this.updateDisplayedCars();
+      } catch (error) {
+        console.error("Error fetching car data:", error);
+      }
+    },
+    updateCarsPerRow() {
+      const containerWidth = window.innerWidth;
+      const cardWidth = 250; // Estimated width of each card
+      const gapWidth = 20; // Estimated gap between cards
+
+      // Calculate how many cars can fit in a row based on screen size
+      this.carsPerRow = Math.floor((containerWidth / (cardWidth + gapWidth))-0.45);
+
+      // Update displayed cars based on calculated rows
+      this.updateDisplayedCars();
+    },
+    updateDisplayedCars() {
+      // 1. Populate `popularCars` with most-booked cars (sorted by `previouslyBookedCount`)
+      this.popularCars = this.totalCars
+        .slice()
+        .sort((a, b) => (b.previouslyBookedCount || 0) - (a.previouslyBookedCount || 0))
+        .slice(0, this.carsPerRow); // Limit to 1 row
+
+      // 2. Populate `recommendedCars` with a random selection
+      this.displayRecommendedCount = this.carsPerRow * 2; // Initially show 2 rows
+      this.recommendedCars = this.totalCars
+        .slice()
+        .sort(() => Math.random() - 0.5) // Shuffle for random selection
+        .slice(0, this.displayRecommendedCount);
+    },
+    showMoreCars() {
+      // Increase the recommended cars display by 2 rows at a time
+      this.displayRecommendedCount += this.carsPerRow * 2;
+      this.recommendedCars = this.totalCars
+        .slice()
+        .sort(() => Math.random() - 0.5) // Shuffle again for a new random selection
+        .slice(0, this.displayRecommendedCount);
+    },
     swapValues() {
-      // Swap the values of Pick-Up and Drop-Off
       [this.pickupCity, this.dropoffCity] = [this.dropoffCity, this.pickupCity];
       [this.pickupDate, this.dropoffDate] = [this.dropoffDate, this.pickupDate];
       [this.pickupTime, this.dropoffTime] = [this.dropoffTime, this.pickupTime];
@@ -115,6 +179,19 @@ export default {
   background-color: #121212;
   color: #ffffff;
 }
+
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.popular-cars,
+.recommended-cars {
+  padding: 30px 50px;
+  margin-bottom: 1rem;
+}
+
 
 /* Hero Section */
 .hero-section {
@@ -202,7 +279,7 @@ export default {
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-} 
+}
 
 /* Car Cards Section */
 .popular-cars,
@@ -227,4 +304,25 @@ export default {
   display: block;
 }
 
+.popular-header-cars {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popular-header-cars a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.recommended-header-cars {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recommended-header-cars a {
+  color: #1a73e8;
+  text-decoration: none;
+}
 </style>
