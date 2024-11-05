@@ -7,6 +7,8 @@ import DetailPage from './pages/DetailPage.vue';
 import EditProfilePage from './pages/EditProfilePage.vue';
 import SecurityPage from './pages/SecurityPage.vue';
 import HelpPage from './pages/HelpPage.vue';
+import PaymentPage from './pages/PaymentPage.vue';
+import FavoritePage from './pages/FavoritePage.vue';
 const routes = [
   {
     path: '/HelpPage',
@@ -54,8 +56,8 @@ const routes = [
     component: PaymentPage, 
   },
   {
-    path: '/favorite',
-    name: 'Favorite',
+    path: '/FavoritePage',
+    name: 'FavoritePage',
     component: FavoritePage, 
   },
 ];
