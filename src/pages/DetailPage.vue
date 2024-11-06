@@ -4,41 +4,12 @@
     <Header />
 
     <div class="main-content">
-      <!-- Sidebar Section -->
-      <aside class="sidebar">
-        <section class="filter-group">
-          <h3>Type</h3>
-          <ul>
-            <li><input type="checkbox" /> Sport (10)</li>
-            <li><input type="checkbox" /> SUV (12)</li>
-            <li><input type="checkbox" /> MPV (16)</li>
-            <li><input type="checkbox" /> Sedan (20)</li>
-            <li><input type="checkbox" /> Coupe (14)</li>
-            <li><input type="checkbox" /> Hatchback (14)</li>
-          </ul>
-        </section>
-        <section class="filter-group">
-          <h3>Capacity</h3>
-          <ul>
-            <li><input type="checkbox" /> 2 Person (10)</li>
-            <li><input type="checkbox" /> 4 Person (14)</li>
-            <li><input type="checkbox" /> 6 Person (12)</li>
-            <li><input type="checkbox" /> 8 or More (16)</li>
-          </ul>
-        </section>
-        <section class="filter-group">
-          <h3>Price</h3>
-          <input type="range" min="0" max="100" />
-          <span>Max: $100.00</span>
-        </section>
-      </aside>
-
       <!-- Main Content Section -->
       <div class="content">
         <!-- Car Details Section -->
         <div class="car-details-container">
           <div class="car-highlight">
-            <img src="https://via.placeholder.com/400" alt="Car image" class="main-car-image"/>
+            <img src="https://via.placeholder.com/400" alt="Car image" class="main-car-image" />
             <div class="car-thumbnails">
               <img src="https://via.placeholder.com/100" alt="Thumbnail" />
               <img src="https://via.placeholder.com/100" alt="Thumbnail" />
@@ -64,46 +35,52 @@
 
         <!-- Reviews Section -->
         <div class="reviews-section">
-  <div class="reviews-header">
-    <h3>Reviews</h3>
-    <span class="review-count">13</span>
-  </div>
-  <div class="review">
-    <img src="https://via.placeholder.com/50" alt="Reviewer image" class="reviewer-img" />
-    <div class="review-content">
-      <div class="review-header">
-        <h4>Alex Stanton</h4>
-        <span class="reviewer-title">CEO at Bukalapak</span>
-      </div>
-      <p class="review-text">
-        We are very happy with the service from the EasyMiles App. EasyMiles has a low price and also a large variety of cars with good and comfortable facilities. In addition, the service provided by the officers is also very friendly and very polite.
-      </p>
-      <div class="review-footer">
-        <span class="review-date">21 July 2022</span>
-        <div class="review-rating">⭐⭐⭐⭐☆</div>
-      </div>
-    </div>
-  </div>
-  <div class="review">
-    <img src="https://via.placeholder.com/50" alt="Reviewer image" class="reviewer-img" />
-    <div class="review-content">
-      <div class="review-header">
-        <h4>Skylar Dias</h4>
-        <span class="reviewer-title">CEO at Amazon</span>
-      </div>
-      <p class="review-text">
-        We are greatly helped by the services of the EasyMiles Application. EasyMiles has low prices and also a wide variety of cars with good and comfortable facilities. In addition, the service provided by the officers is also very friendly and very polite.
-      </p>
-      <div class="review-footer">
-        <span class="review-date">20 July 2022</span>
-        <div class="review-rating">⭐⭐⭐⭐⭐</div>
-      </div>
-    </div>
-  </div>
-  <button class="show-all">
-    Show All <span class="arrow">▼</span>
-  </button>
-</div>
+          <div class="reviews-header">
+            <h3>Reviews</h3>
+            <span class="review-count">{{ reviews.length }}</span>
+            <button @click="openReviewModal" class="write-review-button">Write a Review</button>
+          </div>
+
+          <!-- Existing Reviews -->
+          <div v-for="review in reviews" :key="review.id" class="review">
+            <img src="https://via.placeholder.com/50" alt="Reviewer image" class="reviewer-img" />
+            <div class="review-content">
+              <div class="review-header">
+                <h4>{{ review.name }}</h4>
+                <span class="reviewer-title">{{ review.title }}</span>
+              </div>
+              <p class="review-text">{{ review.text }}</p>
+              <div class="review-footer">
+                <span class="review-date">{{ review.date }}</span>
+                <div class="review-rating">{{ review.rating }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal for Review Form -->
+        <div v-if="isReviewModalOpen" class="modal-overlay" @click="closeReviewModal">
+          <div class="modal-content" @click.stop>
+            <h2>Write a Review</h2>
+            <form @submit.prevent="addReview" class="review-form">
+              <input v-model="newReview.name" type="text" placeholder="Your Name" required />
+              <input v-model="newReview.title" type="text" placeholder="Your Title" required />
+              <textarea v-model="newReview.text" placeholder="Write your review" required></textarea>
+              <div class="rating-section">
+                <label>Rating:</label>
+                <select v-model="newReview.rating" required>
+                  <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+                  <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                  <option value="⭐⭐⭐">⭐⭐⭐</option>
+                  <option value="⭐⭐">⭐⭐</option>
+                  <option value="⭐">⭐</option>
+                </select>
+              </div>
+              <button type="submit" class="submit-button">Submit Review</button>
+              <button type="button" @click="closeReviewModal" class="cancel-button">Cancel</button>
+            </form>
+          </div>
+        </div>
 
         <!-- Recent Car Section styled similar to the category page -->
         <section>
@@ -121,9 +98,9 @@
                 </div>
                 <p class="car-type">{{ car.type }}</p>
                 <div class="car-details">
-                  <span>🚗 {{ car.capacity }}L</span>
-                  <span>⚙️ {{ car.transmission }}</span>
-                  <span>👥 {{ car.seats }} People</span>
+                  <span> {{ car.capacity }}L</span>
+                  <span> {{ car.transmission }}</span>
+                  <span> {{ car.seats }} People</span>
                 </div>
                 <p class="car-price">{{ formatCurrency(car.price) }} / day</p>
                 <button class="rent-button">Rent Now</button>
@@ -150,11 +127,20 @@ export default {
   },
   data() {
     return {
+      isReviewModalOpen: false,
       recentCars: [
         { id: 1, name: 'Koenigsegg', type: 'Sport', price: 99, capacity: 90, transmission: 'Manual', seats: 2, image: 'https://via.placeholder.com/200', favorite: false },
         { id: 2, name: 'Nissan GT - R', type: 'Sport', price: 80, capacity: 80, transmission: 'Manual', seats: 2, image: 'https://via.placeholder.com/200', favorite: false },
         { id: 3, name: 'Rolls-Royce', type: 'Luxury', price: 96, capacity: 70, transmission: 'Automatic', seats: 4, image: 'https://via.placeholder.com/200', favorite: false },
       ],
+      reviews: [
+      ],
+      newReview: {
+        name: '',
+        title: '',
+        text: '',
+        rating: '⭐⭐⭐⭐⭐'
+      }
     };
   },
   methods: {
@@ -164,30 +150,86 @@ export default {
     toggleFavorite(car) {
       car.favorite = !car.favorite;
     },
+    openReviewModal() {
+      this.isReviewModalOpen = true;
+    },
+    closeReviewModal() {
+      this.isReviewModalOpen = false;
+    },
+    addReview() {
+      const newReview = {
+        ...this.newReview,
+        id: Date.now(),
+        date: new Date().toLocaleDateString()
+      };
+      this.reviews.push(newReview);
+      this.newReview = { name: '', title: '', text: '', rating: '⭐⭐⭐⭐⭐' }; // Reset form
+      this.isReviewModalOpen = false; // Close modal after submission
+    }
   },
 };
 </script>
 
 <style scoped>
+
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #1a1a1a;
+  background-color: #1a1a1a00;
   color: #fff;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+.modal-content {
+  background-color: #292929;
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+
+.write-review-button {
+  margin-left: auto;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #1e90ff, #00b4d8);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.3s ease;
+}
+
+.cancel-button {
+  background-color: #555;
+  color: #f0f0f0;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .main-content {
   display: flex;
   flex: 1;
-}
-
-.sidebar {
-  width: 250px;
-  background-color: #2b2b2b;
-  padding: 20px;
-  color: #cfcfcf;
-  border-right: 1px solid #333;
 }
 
 .filter-group h3 {
@@ -239,7 +281,7 @@ export default {
 
 .car-price {
   font-size: 1.5em;
-  color: #00bfff;
+  color: #ffff;
 }
 
 .original-price {
@@ -276,8 +318,8 @@ export default {
 
 .reviews-header h3 {
   margin: 0;
-  font-size: 1.5em;
-  color: #fff;
+  font-size: 1.8em;
+  color: #fff;  
 }
 
 .review-count {
@@ -293,6 +335,15 @@ export default {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
+  padding: 15px;
+  background-color: #444;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.review:hover {
+  transform: scale(1.02);
 }
 
 .reviewer-img {
@@ -311,7 +362,7 @@ export default {
 .review-header h4 {
   margin: 0;
   color: #fff;
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 
 .reviewer-title {
@@ -324,7 +375,7 @@ export default {
   color: #ddd;
   font-size: 0.95em;
   margin: 10px 0;
-  line-height: 1.4;
+  line-height: 1.;
 }
 
 .review-footer {
@@ -379,14 +430,6 @@ export default {
   transform: scale(1.05);
 }
 
-.car-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-bottom: 1px solid #333;
-  margin-bottom: 10px;
-  border-radius: 8px 8px 0 0;
-}
 
 .car-header {
   display: flex;
@@ -423,6 +466,80 @@ export default {
 .view-all {
   font-size: 0.9em;
   color: #007bff;
+  cursor: pointer;
+}
+
+.review-form {
+  background: linear-gradient(135deg, #1B1B1B);
+  padding: 30px;
+  border-radius: 20px;
+  margin: auto;
+  transition: transform 0.3s ease;
+}
+
+.review-form h2 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #e0e0e0;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.review-form input,
+.review-form textarea,
+.review-form select {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  border: none;
+  background-color: #444;
+  color: #fff;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-form input:focus,
+.review-form textarea:focus,
+.review-form select:focus {
+  border-color: #00b4d8;
+  background-color: #2b2b2b;
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+
+.rating-section label {
+  color: #e0e0e0;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 1.1em;
+}
+  .submit-button {
+    background-color: #1e90ff;
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+.submit-button:hover {
+  background-color: #0073e6;
+}
+.review-form button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 </style>
