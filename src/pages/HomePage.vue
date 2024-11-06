@@ -1,3 +1,4 @@
+<!-- Homepage.vue -->
 <template>
   <div class="home-page">
     <Header />
@@ -20,7 +21,7 @@
       </div>
     </section>
 
-    <section class="search-section">
+    <!-- <section class="search-section">
       <div class="search-card">
         <h4>Pick-Up</h4>
         <select v-model="pickupCity">
@@ -48,12 +49,12 @@
         <input type="date" v-model="dropoffDate" />
         <input type="time" v-model="dropoffTime" />
       </div>
-    </section>
+    </section> -->
 
     <section class="popular-cars">
       <div class="popular-header-cars">
         <h3>Popular Car</h3>
-        <router-link to="/">view all</router-link>
+        <router-link to="/category">view all</router-link>
       </div>
       <div class="car-grid">
         <CarCard v-for="car in popularCars" :key="car.id" :car="car" />
@@ -63,7 +64,7 @@
     <section class="recommended-cars">
       <div class="recommended-header-cars">
         <h3>Recommendation Car</h3>
-        <router-link to="/">view all</router-link>
+        <!-- <router-link to="/">view all</router-link> -->
       </div>
       <div class="car-grid">
         <CarCard v-for="car in recommendedCars" :key="car.id" :car="car" />
@@ -109,7 +110,7 @@ export default {
   },
   mounted() {
     const token = localStorage.getItem("jwt");
-    console.log(token);
+    // console.log(token);
     if (token) {
       // Use JWT in API calls or display login status
       this.fetchCarData();

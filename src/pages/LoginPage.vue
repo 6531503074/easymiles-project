@@ -96,7 +96,7 @@ export default {
 </script>
 
 <style>
-html {
+html, body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -104,6 +104,26 @@ html {
   height: 100%;
   font-family: 'Poppins', sans-serif;
   background-color: #121212;
+  overflow-y: auto;
+}
+/* Custom scrollbar for the whole page */
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+}
+
+html::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+  background: #1c1c1c; /* Dark background for the scrollbar track */
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+  background-color: #3e3e3e; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded edges for a modern look */
+  border: 2px solid #1c1c1c; /* Adds padding effect */
+}
+
+html::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Darker color on hover for thumb */
 }
 </style>
 

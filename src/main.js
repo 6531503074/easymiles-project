@@ -4,10 +4,10 @@ import router from './router';
 import { library} from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faLocationDot,faEnvelope,faPhone,faEye, faEyeSlash, faShoppingCart, faHeart, faUser, faGear, faMagnifyingGlass, faBell, faPenToSquare, faLock, faCircleQuestion, faCircleUser, faSignOutAlt, faHistory } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot,faEnvelope,faPhone,faEye, faEyeSlash, faShoppingCart, faHeart, faUser, faGear, faMagnifyingGlass, faBell, faPenToSquare, faLock, faCircleQuestion, faCircleUser, faSignOutAlt, faHistory, faSliders } from '@fortawesome/free-solid-svg-icons';
 
 
-library.add(faLocationDot,faEnvelope,faPhone,faGoogle, faEye, faEyeSlash, faHeart, faShoppingCart, faUser, faGear, faMagnifyingGlass, faBell, faPenToSquare, faLock, faCircleQuestion, faCircleUser, faSignOutAlt, faHistory);
+library.add(faLocationDot,faEnvelope,faPhone,faGoogle, faEye, faEyeSlash, faHeart, faShoppingCart, faUser, faGear, faMagnifyingGlass, faBell, faPenToSquare, faLock, faCircleQuestion, faCircleUser, faSignOutAlt, faHistory, faSliders);
 
 const app = createApp(App);
 

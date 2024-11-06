@@ -15,7 +15,6 @@
         <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
       </a>
       <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
-      <font-awesome-icon :icon="['fas', 'gear']" class="icon" />
       <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" @click="toggleMenu" class="avatar" />
       <div v-if="showMenu" class="dropdown-menu">
         <div class="profile-info">
@@ -24,7 +23,7 @@
         </div>
         <hr />
         <div class="menu-item" @click="goToCard">
-          <font-awesome-icon :icon="['fas', 'shopping-cart']" /> Card
+          <font-awesome-icon :icon="['fas', 'gear']" /> Setting
         </div>
         <div class="menu-item" @click="goToHistory">
           <font-awesome-icon :icon="['fas', 'history']" /> History
@@ -53,22 +52,19 @@ export default {
   },
   async mounted() {
     const token = localStorage.getItem("jwt");
-    console.log(token);
     if (token) {
       try {
         const decoded = VueJwtDecode.decode(token);
         const userId = decoded.id;
 
         // Fetch user details
-        const userResponse = await axios.get(`http://localhost:1337/api/users/${userId}?populate=*`, {
+        const userResponse = await axios.get(`http://localhost:1337/api/users/me?populate=*`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.userName = userResponse.data.username;
         this.email = userResponse.data.email;
         this.userDId = userResponse.data.documentId;
         this.avatar = userResponse.data.profilePicture.url;
-
-        console.log("User avatar:", userResponse.data.profilePicture.url);
 
       } catch (error) {
         console.error("Error fetching data from Strapi:", error);
