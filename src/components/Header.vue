@@ -38,7 +38,7 @@
 
 <script>
 import axios from 'axios';
-import VueJwtDecode from 'vue-jwt-decode';
+// import VueJwtDecode from 'vue-jwt-decode';
 
 export default {
   data() {
@@ -54,8 +54,8 @@ export default {
     const token = localStorage.getItem("jwt");
     if (token) {
       try {
-        const decoded = VueJwtDecode.decode(token);
-        const userId = decoded.id;
+        // const decoded = VueJwtDecode.decode(token);
+        // const userId = decoded.id;
 
         // Fetch user details
         const userResponse = await axios.get(`http://localhost:1337/api/users/me?populate=*`, {
