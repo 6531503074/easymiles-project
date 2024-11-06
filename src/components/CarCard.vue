@@ -1,24 +1,29 @@
 <template>
   <div class="car-card">
-    <div class="card-header">
-      <h4>{{ car.model || 'Unknown Model' }}</h4>
-      <span class="favorite-icon" style="color: gray; font-size: larger;">❤</span>
+    <div>
+      <div class="card-header">
+        <h4>{{ car.model || 'Unknown Model' }}</h4>
+        <span class="favorite-icon" style="color: gray; font-size: larger;">❤</span>
+      </div>
+      <p class="car-type">{{ car.model_type || 'Unknown Type' }}</p>
     </div>
-    <p class="car-type">{{ car.model_type || 'Unknown Type' }}</p>
     <img :src="getImageUrl(car.model_image?.url)" alt="Car Image" @error="onImageError" />
-    
-    <div class="car-details">
-      <span>⛽{{ car.fuelcapacity || 'N/A' }}L</span>
-      <span>⚙️{{ car.transmission || 'N/A' }}</span>
-      <span>👤{{ car.capacity || 'N/A' }} People</span>
+
+    <div class="car-card-bottom">
+      <div class="car-details">
+        <span>⛽{{ car.fuelcapacity || 'N/A' }}L</span>
+        <span>⚙️{{ car.transmission || 'N/A' }}</span>
+        <span>👤{{ car.capacity || 'N/A' }} People</span>
+      </div>
+
+      <div class="price">
+        <p>{{ formatCurrency(car.pricePerDay || 0) }} / day</p>
+        <p class="discounted-price" v-if="car.discountPrice">Before: {{ formatCurrency(car.discountPrice) }}</p>
+      </div>
+
+      <button class="rent-button">Rent Now</button>
+
     </div>
-    
-    <div class="price">
-      <p>{{ formatCurrency(car.pricePerDay || 0) }} / day</p>
-      <p class="discounted-price" v-if="car.discountPrice">Before: {{ formatCurrency(car.discountPrice) }}</p>
-    </div>
-    
-    <button class="rent-button">Rent Now</button>
   </div>
 </template>
 
@@ -40,11 +45,14 @@ export default {
 </script>
 
 <style scoped>
-.favorite-icon{
+.favorite-icon {
   cursor: pointer;
 }
 
 .car-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: #333;
   border-radius: 8px;
   color: #fff;

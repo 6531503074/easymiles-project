@@ -108,6 +108,14 @@ export default {
     };
   },
   mounted() {
+    const token = localStorage.getItem("jwt");
+    console.log(token);
+    if (token) {
+      // Use JWT in API calls or display login status
+      this.fetchCarData();
+    } else {
+      this.$router.push('/'); // Redirect if no JWT token
+    }
     this.fetchCarData();
     this.updateCarsPerRow();
     window.addEventListener('resize', this.updateCarsPerRow);

@@ -51,6 +51,17 @@ export default {
       errorMessage: '', // for showing login error messages
     };
   },
+  mounted() {
+    // Logout user if already logged in
+    // localStorage.removeItem("jwt");
+    // console.log(jwt);
+    // console.log("Logged out");
+    // Check if user is already logged in
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      this.$router.push('/home');
+    }
+  },
   methods: {
     togglePassword() {
       this.showPassword = !this.showPassword;
@@ -58,7 +69,7 @@ export default {
     async handleSubmit() {
       try {
         // Send a POST request to Strapi's authentication endpoint
-        const response = await axios.post('https://easymiles-server-app.onrender.com/api/auth/local', {
+        const response = await axios.post('http://localhost:1337/api/auth/local', {
           identifier: this.email, // Strapi expects the field to be called "identifier"
           password: this.password,
         });
