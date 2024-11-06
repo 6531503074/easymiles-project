@@ -4,9 +4,27 @@ import SignUpPage from './pages/SignUpPage.vue';
 import HomePage from './pages/HomePage.vue';
 import CatePage from './pages/CategoryPage.vue';
 import DetailPage from './pages/DetailPage.vue';
+import EditProfilePage from './pages/EditProfilePage.vue';
+import SecurityPage from './pages/SecurityPage.vue';
+import HelpPage from './pages/HelpPage.vue';
 import PaymentPage from './pages/PaymentPage.vue';
 import FavoritePage from './pages/FavoritePage.vue';
 const routes = [
+  {
+    path: '/HelpPage',
+    name: 'HelpPage',
+    component: HelpPage,
+  },
+  {
+    path: '/SecurityPage',
+    name: 'SecurityPage',
+    component: SecurityPage,
+  },
+  {
+    path: '/EditProfilePage',
+    name: 'EditProfilePage',
+    component: EditProfilePage,
+  },
   {
     path: '/',
     name: 'Login',
@@ -38,8 +56,8 @@ const routes = [
     component: PaymentPage, 
   },
   {
-    path: '/favorite',
-    name: 'Favorite',
+    path: '/FavoritePage',
+    name: 'FavoritePage',
     component: FavoritePage, 
   },
 ];

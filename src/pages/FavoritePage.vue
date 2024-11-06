@@ -1,70 +1,5 @@
 <template>
-  <div class="container mx-auto p-4">
-    <!-- Header -->
-    <Header />
-
-    <!-- Favorite Section -->
-    <section class="my-6">
-      <div class="section-header">
-        <h2 class="section-title">Favorite</h2>
-        <button class="view-all-button">View All</button>
-      </div>
-      <div class="car-grid">
-        <div v-for="car in favoriteCars" :key="car.id" class="car-card">
-          <img :src="car.image" alt="Car Image" />
-          <div class="car-info">
-            <div class="car-header">
-              <h3 class="card-title">{{ car.name }}</h3>
-              <button class="favorite-btn" @click="toggleFavorite(car)" :class="{ 'filled-heart': car.favorite }">
-                <span v-if="car.favorite">❤️</span>
-                <span v-else>🤍</span>
-              </button>
-            </div>
-            <p class="card-type">{{ car.type }}</p>
-            <div class="card-details">
-              <span>{{ car.fuel }}L</span>
-              <span>{{ car.transmission }}</span>
-              <span>{{ car.seats }} People</span>
-            </div>
-            <p class="card-price">${{ car.price }}/day</p>
-            <button class="rent-button">Rent Now</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Recommended Section -->
-    <section class="my-6">
-      <div class="car-grid">
-        <div v-for="car in recommendedCars" :key="car.id" class="car-card">
-          <img :src="car.image" alt="Car Image" />
-          <div class="car-info">
-            <div class="car-header">
-              <h3 class="card-title">{{ car.name }}</h3>
-              <button class="favorite-btn" @click="toggleFavorite(car)" :class="{ 'filled-heart': car.favorite }">
-                <span v-if="car.favorite">❤️</span>
-                <span v-else>🤍</span>
-              </button>
-            </div>
-            <p class="card-type">{{ car.type }}</p>
-            <div class="card-details">
-              <span>{{ car.fuel }}L</span>
-              <span>{{ car.transmission }}</span>
-              <span>{{ car.seats }} People</span>
-            </div>
-            <p class="card-price">${{ car.price }}/day</p>
-            <button class="rent-button">Rent Now</button>
-          </div>
-        </div>
-      </div>
-      <button @click="loadMoreCars" v-if="showMoreButton" class="show-more-button">
-        Show more cars
-      </button>
-    </section>
-
-    <!-- Footer -->
-    <Footer />
-  </div>
+    
 </template>
 
 <script>
@@ -121,7 +56,7 @@ export default {
 
 <style scoped>
 .container {
-  background-color: #1f1f1f;
+  background-color: #121212;
   color: #ffffff;
   padding: 16px;
 }
