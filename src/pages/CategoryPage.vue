@@ -164,7 +164,7 @@ export default {
 .app-container {
   font-family: Arial, sans-serif;
   color: #f0f0f0;
-  background-color: #121212;
+  background-color: #121212; /* Same background color as the homepage */
 }
 
 .content {
@@ -175,7 +175,7 @@ export default {
   width: 250px;
   padding: 20px;
   background-color: #1f1f1f;
-  border-right: 1px solid #333; 
+  border-right: 1px solid #333;
 }
 
 .main-content {
@@ -302,6 +302,7 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
+
 .favorite-btn {
   background: none;
   border: none;

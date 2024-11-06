@@ -121,7 +121,7 @@ export default {
 
 <style scoped>
 .container {
-  background-color: #1f1f1f;
+  background-color: #121212;
   color: #ffffff;
   padding: 16px;
 }
