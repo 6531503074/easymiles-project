@@ -152,12 +152,12 @@ export default {
 
 .avatar {
   cursor: pointer;
-  width: 25px; /* Match the font size of the icons */
-  height: 25px; /* Match the font size of the icons */
+  width: 35px; /* Match the font size of the icons */
+  height: 35px; /* Match the font size of the icons */
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid gray; /* Match the border style of icons */
-  padding: 10px; /* Match the padding of icons */
+  padding: 5px; /* Match the padding of icons */
 }
 
 
