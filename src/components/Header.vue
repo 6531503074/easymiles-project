@@ -15,30 +15,34 @@
         <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
       </a>
       <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
-      <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" @click="toggleMenu" class="avatar" />
-      <div v-if="showMenu" class="dropdown-menu">
-        <div class="profile-info">
-          <img :src="getImageUrl(this.avatar)" alt="Profile" class="profile-avatar" />
-          <h3>{{ userName }}</h3>
-        </div>
-        <hr />
-        <div class="menu-item" @click="goToCard">
-          <font-awesome-icon :icon="['fas', 'gear']" /> Setting
-        </div>
-        <div class="menu-item" @click="goToHistory">
-          <font-awesome-icon :icon="['fas', 'history']" /> History
-        </div>
-        <div class="menu-item" @click="logout">
-          <font-awesome-icon :icon="['fas', 'sign-out-alt']" /> Logout
+      
+      <!-- Avatar and Dropdown Container -->
+      <div class="avatar-container" @click="toggleMenu">
+        <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" class="avatar" />
+        <div v-if="showMenu" class="dropdown-menu">
+          <div class="profile-info">
+            <img :src="getImageUrl(this.avatar)" alt="Profile" class="profile-avatar" />
+            <h3>{{ userName }}</h3>
+          </div>
+          <hr />
+          <div class="menu-item" @click="goToCard">
+            <font-awesome-icon :icon="['fas', 'gear']" /> Setting
+          </div>
+          <div class="menu-item" @click="goToHistory">
+            <font-awesome-icon :icon="['fas', 'history']" /> History
+          </div>
+          <div class="menu-item" @click="logout">
+            <font-awesome-icon :icon="['fas', 'sign-out-alt']" /> Logout
+          </div>
         </div>
       </div>
     </nav>
   </header>
 </template>
 
+
 <script>
 import axios from 'axios';
-// import VueJwtDecode from 'vue-jwt-decode';
 
 export default {
   data() {
@@ -54,8 +58,6 @@ export default {
     const token = localStorage.getItem("jwt");
     if (token) {
       try {
-        // const decoded = VueJwtDecode.decode(token);
-        // const userId = decoded.id;
 
         // Fetch user details
         const userResponse = await axios.get(`http://localhost:1337/api/users/me?populate=*`, {
@@ -150,29 +152,35 @@ export default {
   color: #E0E0E0;
 }
 
-.avatar {
+/* Avatar and Dropdown Container */
+.avatar-container {
+  position: relative;
   cursor: pointer;
-  width: 35px; /* Match the font size of the icons */
-  height: 35px; /* Match the font size of the icons */
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid gray; /* Match the border style of icons */
-  padding: 5px; /* Match the padding of icons */
 }
 
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid gray;
+  padding: 5px;
+}
 
+/* Dropdown Menu Styling */
 .dropdown-menu {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 120px;
-  right: 20px;
-  width: 220px;
   padding: 10px;
-  background-color: #1e1e1e; /* Dark background */
+  top: 100%; /* Place it directly below the avatar */
+  right: 0;
+  width: 220px;
+  margin-top: 10px; /* Space between avatar and dropdown */
+  background-color: #1e1e1e;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Softer shadow */
-  color: #e0e0e0; /* Light text for readability */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
   z-index: 1000;
   overflow: hidden;
 }
@@ -184,7 +192,7 @@ export default {
   width: 100%;
   padding-top: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #3e3e3e; /* Subtle border between sections */
+  border-bottom: 1px solid #3e3e3e;
 }
 
 .profile-info h3 {
@@ -199,7 +207,7 @@ export default {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 15px;
-  border: 2px solid #3e3e3e; /* Matches the theme */
+  border: 2px solid #3e3e3e;
 }
 
 .menu-item {
@@ -217,18 +225,19 @@ export default {
 }
 
 .menu-item:hover {
-  background-color: #333333; /* Darken on hover */
+  background-color: #333333;
 }
 
 .menu-item font-awesome-icon {
   margin-right: 10px;
-  color: #a0a0a0; /* Icon color */
+  color: #a0a0a0;
 }
 
 hr {
   border: none;
-  border-top: 1px solid #3e3e3e; /* Divider line with theme color */
+  border-top: 1px solid #3e3e3e;
   margin: 0;
 }
+
 
 </style>
