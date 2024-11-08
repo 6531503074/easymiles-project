@@ -11,7 +11,7 @@
           <div v-if="car" class="car-highlight">
             <img :src="getCarImage(car.model_image?.url)" alt="Car image" class="main-car-image" />
             <div v-if="car.part_image && car.part_image.length > 0" class="car-thumbnails"
-              :class="{ 'scrollable': car.part_image.length > 3 }">
+              :class="{ 'scrollable': car.part_image.length > 2 }">
               <img v-for="(image, index) in car.part_image" :src="getCarImage(image.url)" :key="index" alt="Thumbnail"
                 @click="openImageModal(index)" class="thumbnail-image" />
             </div>
