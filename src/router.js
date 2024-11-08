@@ -46,9 +46,10 @@ const routes = [
     component: CatePage, 
   },
   {
-    path: '/detail',
+    path: '/detail/:id',
     name: 'Detail',
     component: DetailPage, 
+    props: true,
   },
   {
     path: '/payment',
