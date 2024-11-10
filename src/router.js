@@ -52,9 +52,10 @@ const routes = [
     props: true,
   },
   {
-    path: '/payment',
+    path: '/payment/:id',
     name: 'Payment',
     component: PaymentPage, 
+    props: true,
   },
   {
     path: '/FavoritePage',

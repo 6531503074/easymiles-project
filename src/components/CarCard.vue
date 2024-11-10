@@ -21,7 +21,7 @@
         <p class="discounted-price" v-if="car.discountPrice">Before: {{ formatCurrency(car.discountPrice) }}</p>
       </div>
 
-      <button class="rent-button" @click.stop="">Rent Now</button>
+      <button class="rent-button" @click.stop="goToPaymentPage">Rent Now</button>
     </div>
   </div>
 </template>
@@ -44,6 +44,11 @@ export default {
       const url = `/detail/${this.car.documentId}`;
       window.location.href = url;
     },
+    goToPaymentPage() {
+      this.$router.push({ name: 'Payment', params: { id: this.car.documentId } });
+      // const url = `/payment/${this.car.documentId}`;
+      // window.location.href
+    }
   },
 };
 </script>
