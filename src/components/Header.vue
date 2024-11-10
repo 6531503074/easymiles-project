@@ -14,8 +14,25 @@
       <a href="/favorite">
         <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
       </a>
-      <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
-      
+      <!-- Notification Icon -->
+      <div class="notification-container" @click="toggleNotificationMenu">
+        <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
+        <span v-if="hasUnreadNotifications" class="notification-dot"></span>
+        <div v-if="showNotificationMenu" class="notification-menu">
+          <h4>Notifications</h4>
+          <ul>
+            <li v-for="(notification, index) in notifications" :key="index">
+              <img :src="getImageUrl(notification.notification_car_image)" alt="Car Image" class="notification-car-img" />
+              <div>
+                {{ notification.message }}
+              </div>
+              <span class="time">{{ formatTime(notification.timestamp) }}</span>
+            </li>
+            <li v-if="notifications.length === 0">No notifications</li>
+          </ul>
+        </div>
+      </div>
+
       <!-- Avatar and Dropdown Container -->
       <div class="avatar-container" @click="toggleMenu">
         <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" class="avatar" />
@@ -52,7 +69,14 @@ export default {
       email: '',
       userDId: '',
       avatar: '',
+      showNotificationMenu: false,
+      notifications: [],
     };
+  },
+  computed: {
+    hasUnreadNotifications() {
+      return this.notifications.some(notification => !notification.read);
+    },
   },
   async mounted() {
     const token = localStorage.getItem("jwt");
@@ -68,6 +92,8 @@ export default {
         this.userDId = userResponse.data.documentId;
         this.avatar = userResponse.data.profilePicture.url;
 
+        await this.fetchNotifications();
+
       } catch (error) {
         console.error("Error fetching data from Strapi:", error);
       }
@@ -78,6 +104,12 @@ export default {
   methods: {
     toggleMenu() {
       this.showMenu = !this.showMenu;
+    },
+    toggleNotificationMenu() {
+      this.showNotificationMenu = !this.showNotificationMenu;
+      if (this.showNotificationMenu) {
+        this.markAllAsRead();
+      }
     },
     logout() {
       localStorage.removeItem("jwt");
@@ -94,6 +126,60 @@ export default {
     },
     goToHistory() {
       this.$router.push('/history');
+    },
+    async fetchNotifications() {
+      const token = localStorage.getItem("jwt");
+      console.log(this.userDId);
+      try {
+        const response = await axios.get(`http://localhost:1337/api/notifications?filters[users_permissions_user][documentId][$eq]=${this.userDId}&populate[users_permissions_user][populate]=profilePicture&populate[car][populate]=model_image`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.notifications = response.data.data.map(notification => ({
+          ...notification.attributes,
+          id: notification.id,
+          documentId: notification.documentId,
+          message: notification.message,
+          timestamp: notification.timestamp,
+          read: notification.read,
+          notification_car_image: notification.car.model_image.url,
+        }));
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    },
+    async markAllAsRead() {
+      const token = localStorage.getItem("jwt");
+      try {
+        const unreadNotifications = this.notifications.filter(notification => !notification.read);
+        
+        // Update each unread notification to mark it as read
+        const updatePromises = unreadNotifications.map(notification =>
+          axios.put(`http://localhost:1337/api/notifications/${notification.documentId}`, {
+            data: { read: true },
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+        );
+        
+        await Promise.all(updatePromises);
+
+        // Update local state
+        this.notifications.forEach(notification => {
+          notification.read = true;
+        });
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    },
+    formatTime(timestamp) {
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(timestamp));
     },
   },
 };
@@ -173,10 +259,12 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  top: 100%; /* Place it directly below the avatar */
+  top: 100%;
+  /* Place it directly below the avatar */
   right: 0;
   width: 220px;
-  margin-top: 10px; /* Space between avatar and dropdown */
+  margin-top: 10px;
+  /* Space between avatar and dropdown */
   background-color: #1e1e1e;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -239,5 +327,90 @@ hr {
   margin: 0;
 }
 
+/* Notification Styling */
+.notification-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 1px solid #121212;
+}
+
+.notification-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  padding: 10px;
+  border-radius: 8px;
+  width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #444;
+  overflow-y: auto;
+}
+
+.notification-menu h4 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.notification-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.notification-menu li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.notification-menu div {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.notification-menu li:last-child {
+  border-bottom: none;
+}
+
+.notification-menu li:hover {
+  background-color: #333;
+}
+
+.notification-menu .time {
+  font-size: 0.8em;
+  color: #aaa;
+}
+
+.notification-car-img {
+  width: 50px;
+  height: 50px;
+  object-fit: fit;
+  object-position: top;
+  border-radius: 50%;
+  margin-right: 10px;
+}
 
 </style>

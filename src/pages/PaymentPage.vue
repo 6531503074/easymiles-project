@@ -319,7 +319,7 @@ export default {
         const paymentData = {
           data: {
             method: this.paymentInfo.method,
-            payment_status: true,
+            payment_status: "Complete",
             totalPrice: this.totalPrice,
             transactionDate: new Date().toISOString(),
             cardNumber: this.paymentInfo.cardNumber,
@@ -333,7 +333,7 @@ export default {
             dropoffTime: formattedDropoffTime,
             users_permissions_user: this.userDId,
             car: this.id,
-            booking_status: true,
+            booking_status: "Pending",
           },
         };
 
@@ -343,6 +343,18 @@ export default {
           },
         });
         alert("Payment submitted successfully!");
+        await axios.post("http://localhost:1337/api/notifications", {
+          data: {
+            message: `The new ${this.car.model_brand} - ${this.car.model} has been rented.`,
+            timestamp: new Date().toISOString(),
+            users_permissions_user: this.userDId,
+            car: this.id,
+          },
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         this.$router.push("/home");
       } catch (error) {
         console.error("Error submitting payment:", error);
