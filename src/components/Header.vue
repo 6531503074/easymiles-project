@@ -15,18 +15,19 @@
         <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
       </a>
       <!-- Notification Icon -->
-      <div class="notification-container" @click="toggleNotificationMenu">
+      <div class="notification-container" @click.stop="toggleNotificationMenu">
         <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
         <span v-if="hasUnreadNotifications" class="notification-dot"></span>
-        <div v-if="showNotificationMenu" class="notification-menu">
+        <div v-if="showNotificationMenu" class="notification-menu" @click.stop>
           <h4>Notifications</h4>
           <ul>
             <li v-for="(notification, index) in notifications" :key="index">
-              <img :src="getImageUrl(notification.notification_car_image)" alt="Car Image" class="notification-car-img" />
+              <img :src="getImageUrl(notification.notification_car_image)" @error="onImageError" alt="Car Image"
+                class="notification-car-img" />
               <div>
                 {{ notification.message }}
               </div>
-              <span class="time">{{ formatTime(notification.timestamp) }}</span>
+              <span class="time">{{ formatDateTime(notification.timestamp) }}</span>
             </li>
             <li v-if="notifications.length === 0">No notifications</li>
           </ul>
@@ -34,9 +35,9 @@
       </div>
 
       <!-- Avatar and Dropdown Container -->
-      <div class="avatar-container" @click="toggleMenu">
+      <div class="avatar-container" @click.stop="toggleMenu">
         <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" class="avatar" />
-        <div v-if="showMenu" class="dropdown-menu">
+        <div v-if="showMenu" class="dropdown-menu" @click.stop>
           <div class="profile-info">
             <img :src="getImageUrl(this.avatar)" alt="Profile" class="profile-avatar" />
             <h3>{{ userName }}</h3>
@@ -77,6 +78,19 @@ export default {
     hasUnreadNotifications() {
       return this.notifications.some(notification => !notification.read);
     },
+    sortedNotifications() {
+      return this.notifications.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    },
+  },
+  watch: {
+    notifications: {
+      handler(newVal) {
+        // Check if there are any unread notifications
+        this.hasUnreadNotifications = newVal.some(notification => !notification.read);
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   async mounted() {
     const token = localStorage.getItem("jwt");
@@ -92,14 +106,20 @@ export default {
         this.userDId = userResponse.data.documentId;
         this.avatar = userResponse.data.profilePicture.url;
 
-        await this.fetchNotifications();
-
       } catch (error) {
         console.error("Error fetching data from Strapi:", error);
       }
     } else {
       console.warn("No JWT token found. Please log in first.");
     }
+    await this.fetchNotifications();
+    this.startNotificationPolling();
+    document.addEventListener('click', this.handleOutsideClick);
+  },
+  beforeDestroy() {
+    // Clear the polling interval when component is destroyed
+    document.removeEventListener('click', this.handleOutsideClick);
+    clearInterval(this.notificationInterval);
   },
   methods: {
     toggleMenu() {
@@ -116,44 +136,55 @@ export default {
       this.$router.push('/');
     },
     getImageUrl(path) {
-      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'car.png';
+      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'https://via.placeholder.com/150';
     },
     onImageError(event) {
-      event.target.src = 'car.png';
+      event.target.src = 'https://www.gravatar.com/avatar/?d=mp';
     },
     goToCard() {
       this.$router.push('/card');
     },
     goToHistory() {
-      this.$router.push('/history');
+      this.$router.push('/HistoryPage');
     },
     async fetchNotifications() {
       const token = localStorage.getItem("jwt");
-      console.log(this.userDId);
+      // console.log(this.userDId);
       try {
         const response = await axios.get(`http://localhost:1337/api/notifications?filters[users_permissions_user][documentId][$eq]=${this.userDId}&populate[users_permissions_user][populate]=profilePicture&populate[car][populate]=model_image`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        this.notifications = response.data.data.map(notification => ({
-          ...notification.attributes,
-          id: notification.id,
-          documentId: notification.documentId,
-          message: notification.message,
-          timestamp: notification.timestamp,
-          read: notification.read,
-          notification_car_image: notification.car.model_image.url,
-        }));
+        this.notifications = response.data.data.map(notification => {
+          const carImageUrl = notification.car
+            ? notification.car.model_image.url
+            : 'https://www.gravatar.com/avatar/?d=mp';
+
+          return {
+            ...notification.attributes,
+            id: notification.id,
+            documentId: notification.documentId,
+            message: notification.message,
+            timestamp: notification.timestamp,
+            read: notification.read,
+            notification_car_image: carImageUrl,
+          };
+        });
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
+    },
+    startNotificationPolling() {
+      // Poll for new notifications every 30 seconds
+      this.notificationInterval = setInterval(this.fetchNotifications, 1000);
+      this.fetchNotifications(); // Initial fetch
     },
     async markAllAsRead() {
       const token = localStorage.getItem("jwt");
       try {
         const unreadNotifications = this.notifications.filter(notification => !notification.read);
-        
+
         // Update each unread notification to mark it as read
         const updatePromises = unreadNotifications.map(notification =>
           axios.put(`http://localhost:1337/api/notifications/${notification.documentId}`, {
@@ -164,7 +195,7 @@ export default {
             },
           })
         );
-        
+
         await Promise.all(updatePromises);
 
         // Update local state
@@ -175,11 +206,26 @@ export default {
         console.error("Error marking notifications as read:", error);
       }
     },
-    formatTime(timestamp) {
+    formatDateTime(timestamp) {
       return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       }).format(new Date(timestamp));
+    },
+    handleOutsideClick(event) {
+      const notificationContainer = this.$el.querySelector('.notification-container');
+      const avatarContainer = this.$el.querySelector('.avatar-container');
+
+      if (
+        notificationContainer && !notificationContainer.contains(event.target) &&
+        avatarContainer && !avatarContainer.contains(event.target)
+      ) {
+        this.showMenu = false;
+        this.showNotificationMenu = false;
+      }
     },
   },
 };
@@ -412,5 +458,4 @@ hr {
   border-radius: 50%;
   margin-right: 10px;
 }
-
 </style>

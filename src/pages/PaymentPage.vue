@@ -272,13 +272,7 @@ export default {
         this.reviews = reviewresponse.data.data.map((review) => ({
           ...review.attributes,
           id: review.id,
-          title: review.title,
-          text: review.comment,
           rating: review.rating,
-          date: review.date,
-          name: review.users_permissions_user.username,
-          avatar: review.users_permissions_user.profilePicture.url,
-
         }));
 
         // Calculate average rating and total reviews count

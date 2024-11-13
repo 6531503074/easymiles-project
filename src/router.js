@@ -9,6 +9,7 @@ import SecurityPage from './pages/SecurityPage.vue';
 import HelpPage from './pages/HelpPage.vue';
 import PaymentPage from './pages/PaymentPage.vue';
 import FavoritePage from './pages/FavoritePage.vue';
+import HistoryPage from './pages/HistoryPage.vue';
 const routes = [
   {
     path: '/HelpPage',
@@ -62,6 +63,11 @@ const routes = [
     name: 'FavoritePage',
     component: FavoritePage, 
   },
+  {
+    path: '/HistoryPage',
+    name: 'HistoryPage',
+    component: HistoryPage,
+  }
 ];
 
 const router = createRouter({

@@ -21,36 +21,6 @@
       </div>
     </section>
 
-    <!-- <section class="search-section">
-      <div class="search-card">
-        <h4>Pick-Up</h4>
-        <select v-model="pickupCity">
-          <option value="">Select your city</option>
-          <option value="new-york">New York</option>
-          <option value="los-angeles">Los Angeles</option>
-          <option value="chicago">Chicago</option>
-          <option value="houston">Houston</option>
-          <option value="phoenix">Phoenix</option>
-        </select>
-        <input type="date" v-model="pickupDate" />
-        <input type="time" v-model="pickupTime" />
-      </div>
-      <button class="swap-btn" @click="swapValues">↔</button>
-      <div class="search-card">
-        <h4>Drop-Off</h4>
-        <select v-model="dropoffCity">
-          <option value="">Select your city</option>
-          <option value="new-york">New York</option>
-          <option value="los-angeles">Los Angeles</option>
-          <option value="chicago">Chicago</option>
-          <option value="houston">Houston</option>
-          <option value="phoenix">Phoenix</option>
-        </select>
-        <input type="date" v-model="dropoffDate" />
-        <input type="time" v-model="dropoffTime" />
-      </div>
-    </section> -->
-
     <section class="popular-cars">
       <div class="popular-header-cars">
         <h3>Popular Car</h3>

@@ -34,10 +34,10 @@ export default {
       return `$${value.toFixed(2)}`;
     },
     getImageUrl(path) {
-      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'car.png';
+      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'https://via.placeholder.com/150';
     },
     onImageError(event) {
-      event.target.src = 'car.png';
+      event.target.src = 'https://via.placeholder.com/150';
     },
     goToDetailPage() {
       // this.$router.push({ name: 'Detail', params: { id: this.car.documentId } });
