@@ -5,7 +5,7 @@
     <div class="box-container">
     </div>
     <img :src="getImageUrl(this.avatar)" alt="Profile" class="avatar" />
-    <h1 class="name">{{ user.firstName+" "+ user.lastName }}</h1>
+    <h1 class="name">{{ user.firstName + " " + user.lastName }}</h1>
     <div class="line">
       <button class="select-button-active">
         <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon-active" />
@@ -54,7 +54,7 @@
         </div>
       </form>
     </div>
-    
+
     <Footer />
   </div>
 </template>
@@ -78,7 +78,7 @@ export default {
         address: '',
         contact: '',
         password: '',
-        avatar:'',
+        avatar: '',
       },
       originalUser: {} // เก็บข้อมูลเดิมเพื่อใช้เมื่อกด Cancel
     };
@@ -107,7 +107,7 @@ export default {
         this.user.address = userData.address;
         this.user.contact = userData.contact;
         this.user.avatar = userData.profilePicture.url;
-        
+
         this.firstName = userData.firstName;
         this.lastName = userData.lastName;
         this.avatar = userData.profilePicture.url;
@@ -157,7 +157,6 @@ export default {
 </script>
 
 <style scoped>
-
 .box-container {
   max-width: 15000px;
   /* Controls the maximum width of the box */
@@ -170,7 +169,8 @@ export default {
 .avatar {
   margin-top: -5rem;
   margin-left: 5rem;
-  width: 250px; /* กำหนดขนาดภาพ */
+  width: 250px;
+  /* กำหนดขนาดภาพ */
   height: 250px;
   display: flex;
   object-fit: cover;
@@ -307,5 +307,4 @@ input[type="password"] {
 .save-button:hover {
   background-color: #0056b3;
 }
-
 </style>

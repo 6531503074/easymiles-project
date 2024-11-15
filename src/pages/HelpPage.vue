@@ -281,24 +281,23 @@ export default {
     margin: 0;
 }
 
-.info-under{
+.info-under {
     padding-top: 100px;
     display: flex;
 }
 
-.info-icon-under-center{
+.info-icon-under-center {
     margin: auto;
     font-size: 2rem;
 }
 
-.info-icon-under-right{
+.info-icon-under-right {
     margin-right: 210px;
     font-size: 2rem;
 }
 
-.info-icon-under-left{
+.info-icon-under-left {
     margin-left: 210px;
     font-size: 2rem;
 }
-
 </style>
