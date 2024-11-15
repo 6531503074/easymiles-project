@@ -1,5 +1,5 @@
 <template>
-  <div class="car-card">
+  <div class="car-card" @click="goToDetailPage">
     <div>
       <div class="card-header">
         <h4>{{ car.model || 'Unknown Model' }}</h4>
@@ -21,8 +21,7 @@
         <p class="discounted-price" v-if="car.discountPrice">Before: {{ formatCurrency(car.discountPrice) }}</p>
       </div>
 
-      <button class="rent-button">Rent Now</button>
-
+      <button class="rent-button" @click.stop="goToPaymentPage">Rent Now</button>
     </div>
   </div>
 </template>
@@ -35,11 +34,21 @@ export default {
       return `$${value.toFixed(2)}`;
     },
     getImageUrl(path) {
-      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'car.png';
+      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'https://via.placeholder.com/150';
     },
     onImageError(event) {
-      event.target.src = 'car.png';
+      event.target.src = 'https://via.placeholder.com/150';
     },
+    goToDetailPage() {
+      // this.$router.push({ name: 'Detail', params: { id: this.car.documentId } });
+      const url = `/detail/${this.car.documentId}`;
+      window.location.href = url;
+    },
+    goToPaymentPage() {
+      this.$router.push({ name: 'Payment', params: { id: this.car.documentId } });
+      // const url = `/payment/${this.car.documentId}`;
+      // window.location.href
+    }
   },
 };
 </script>
@@ -60,6 +69,13 @@ export default {
   text-align: center;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.car-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .card-header {
@@ -119,5 +135,9 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   width: 100%;
+}
+
+.rent-button:hover {
+  background-color: #1a73e8;
 }
 </style>

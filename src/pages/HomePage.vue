@@ -21,36 +21,6 @@
       </div>
     </section>
 
-    <!-- <section class="search-section">
-      <div class="search-card">
-        <h4>Pick-Up</h4>
-        <select v-model="pickupCity">
-          <option value="">Select your city</option>
-          <option value="new-york">New York</option>
-          <option value="los-angeles">Los Angeles</option>
-          <option value="chicago">Chicago</option>
-          <option value="houston">Houston</option>
-          <option value="phoenix">Phoenix</option>
-        </select>
-        <input type="date" v-model="pickupDate" />
-        <input type="time" v-model="pickupTime" />
-      </div>
-      <button class="swap-btn" @click="swapValues">↔</button>
-      <div class="search-card">
-        <h4>Drop-Off</h4>
-        <select v-model="dropoffCity">
-          <option value="">Select your city</option>
-          <option value="new-york">New York</option>
-          <option value="los-angeles">Los Angeles</option>
-          <option value="chicago">Chicago</option>
-          <option value="houston">Houston</option>
-          <option value="phoenix">Phoenix</option>
-        </select>
-        <input type="date" v-model="dropoffDate" />
-        <input type="time" v-model="dropoffTime" />
-      </div>
-    </section> -->
-
     <section class="popular-cars">
       <div class="popular-header-cars">
         <h3>Popular Car</h3>
@@ -96,7 +66,7 @@ export default {
     return {
       totalCars: [],
       popularCars: [],
-      recommendedCars: [],
+      recommendedCars: [], // Initially displayed cars
       displayRecommendedCount: 0, // Number of recommended cars to show initially
       carsPerRow: 4,
       // New data properties for Pick-Up and Drop-Off
@@ -110,14 +80,11 @@ export default {
   },
   mounted() {
     const token = localStorage.getItem("jwt");
-    // console.log(token);
     if (token) {
-      // Use JWT in API calls or display login status
       this.fetchCarData();
     } else {
       this.$router.push('/'); // Redirect if no JWT token
     }
-    this.fetchCarData();
     this.updateCarsPerRow();
     window.addEventListener('resize', this.updateCarsPerRow);
   },
@@ -145,7 +112,7 @@ export default {
       const gapWidth = 20; // Estimated gap between cards
 
       // Calculate how many cars can fit in a row based on screen size
-      this.carsPerRow = Math.floor((containerWidth / (cardWidth + gapWidth))-0.45);
+      this.carsPerRow = Math.floor((containerWidth / (cardWidth + gapWidth)) - 0.45);
 
       // Update displayed cars based on calculated rows
       this.updateDisplayedCars();
@@ -157,20 +124,27 @@ export default {
         .sort((a, b) => (b.previouslyBookedCount || 0) - (a.previouslyBookedCount || 0))
         .slice(0, this.carsPerRow); // Limit to 1 row
 
-      // 2. Populate `recommendedCars` with a random selection
-      this.displayRecommendedCount = this.carsPerRow * 2; // Initially show 2 rows
-      this.recommendedCars = this.totalCars
-        .slice()
-        .sort(() => Math.random() - 0.5) // Shuffle for random selection
-        .slice(0, this.displayRecommendedCount);
+      // 2. Populate `recommendedCars` with an initial random selection of 2 rows
+      this.displayRecommendedCount = this.carsPerRow * 2;
+      this.recommendedCars = this.getRandomSubset(this.totalCars, this.displayRecommendedCount);
     },
     showMoreCars() {
-      // Increase the recommended cars display by 2 rows at a time
+      // Increment the count by 2 rows
       this.displayRecommendedCount += this.carsPerRow * 2;
-      this.recommendedCars = this.totalCars
-        .slice()
-        .sort(() => Math.random() - 0.5) // Shuffle again for a new random selection
-        .slice(0, this.displayRecommendedCount);
+
+      // Get a random subset for the new rows only
+      const additionalCars = this.getRandomSubset(
+        this.totalCars.slice(this.recommendedCars.length), // Remaining cars to avoid duplicates
+        this.carsPerRow * 2
+      );
+
+      // Append the new random rows to the existing recommendedCars
+      this.recommendedCars = this.recommendedCars.concat(additionalCars);
+    },
+    getRandomSubset(array, count) {
+      // Helper function to get a random subset of a specific size
+      const shuffled = array.slice().sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, count);
     },
     swapValues() {
       [this.pickupCity, this.dropoffCity] = [this.dropoffCity, this.pickupCity];
@@ -180,6 +154,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Main Page Styles */

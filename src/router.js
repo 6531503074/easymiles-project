@@ -9,6 +9,7 @@ import SecurityPage from './pages/SecurityPage.vue';
 import HelpPage from './pages/HelpPage.vue';
 import PaymentPage from './pages/PaymentPage.vue';
 import FavoritePage from './pages/FavoritePage.vue';
+import HistoryPage from './pages/HistoryPage.vue';
 const routes = [
   {
     path: '/HelpPage',
@@ -46,20 +47,27 @@ const routes = [
     component: CatePage, 
   },
   {
-    path: '/detail',
+    path: '/detail/:id',
     name: 'Detail',
     component: DetailPage, 
+    props: true,
   },
   {
-    path: '/payment',
+    path: '/payment/:id',
     name: 'Payment',
     component: PaymentPage, 
+    props: true,
   },
   {
     path: '/FavoritePage',
     name: 'FavoritePage',
     component: FavoritePage, 
   },
+  {
+    path: '/HistoryPage',
+    name: 'HistoryPage',
+    component: HistoryPage,
+  }
 ];
 
 const router = createRouter({

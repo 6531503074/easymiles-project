@@ -14,31 +14,53 @@
       <a href="/favorite">
         <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
       </a>
-      <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
-      <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" @click="toggleMenu" class="avatar" />
-      <div v-if="showMenu" class="dropdown-menu">
-        <div class="profile-info">
-          <img :src="getImageUrl(this.avatar)" alt="Profile" class="profile-avatar" />
-          <h3>{{ userName }}</h3>
+      <!-- Notification Icon -->
+      <div class="notification-container" @click.stop="toggleNotificationMenu">
+        <font-awesome-icon :icon="['fas', 'bell']" class="icon" />
+        <span v-if="hasUnreadNotifications" class="notification-dot"></span>
+        <div v-if="showNotificationMenu" class="notification-menu" @click.stop>
+          <h4>Notifications</h4>
+          <ul>
+            <li v-for="(notification, index) in notifications" :key="index">
+              <img :src="getImageUrl(notification.notification_car_image)" @error="onImageError" alt="Car Image"
+                class="notification-car-img" />
+              <div>
+                {{ notification.message }}
+              </div>
+              <span class="time">{{ formatDateTime(notification.timestamp) }}</span>
+            </li>
+            <li v-if="notifications.length === 0">No notifications</li>
+          </ul>
         </div>
-        <hr />
-        <div class="menu-item" @click="goToCard">
-          <font-awesome-icon :icon="['fas', 'gear']" /> Setting
-        </div>
-        <div class="menu-item" @click="goToHistory">
-          <font-awesome-icon :icon="['fas', 'history']" /> History
-        </div>
-        <div class="menu-item" @click="logout">
-          <font-awesome-icon :icon="['fas', 'sign-out-alt']" /> Logout
+      </div>
+
+      <!-- Avatar and Dropdown Container -->
+      <div class="avatar-container" @click.stop="toggleMenu">
+        <img :src="getImageUrl(this.avatar)" alt="Avatar" @error="onImageError" class="avatar" />
+        <div v-if="showMenu" class="dropdown-menu" @click.stop>
+          <div class="profile-info">
+            <img :src="getImageUrl(this.avatar)" alt="Profile" class="profile-avatar" />
+            <h3>{{ userName }}</h3>
+          </div>
+          <hr />
+          <div class="menu-item" @click="goToCard">
+            <font-awesome-icon :icon="['fas', 'gear']" /> Setting
+          </div>
+          <div class="menu-item" @click="goToHistory">
+            <font-awesome-icon :icon="['fas', 'history']" /> History
+          </div>
+          <div class="menu-item" @click="logout">
+            <font-awesome-icon :icon="['fas', 'sign-out-alt']" /> Logout
+          </div>
         </div>
       </div>
     </nav>
   </header>
 </template>
 
+
 <script>
 import axios from 'axios';
-// import VueJwtDecode from 'vue-jwt-decode';
 
 export default {
   data() {
@@ -48,14 +70,32 @@ export default {
       email: '',
       userDId: '',
       avatar: '',
+      showNotificationMenu: false,
+      notifications: [],
     };
+  },
+  computed: {
+    hasUnreadNotifications() {
+      return this.notifications.some(notification => !notification.read);
+    },
+    sortedNotifications() {
+      return this.notifications.slice().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    },
+  },
+  watch: {
+    notifications: {
+      handler(newVal) {
+        // Check if there are any unread notifications
+        this.hasUnreadNotifications = newVal.some(notification => !notification.read);
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   async mounted() {
     const token = localStorage.getItem("jwt");
     if (token) {
       try {
-        // const decoded = VueJwtDecode.decode(token);
-        // const userId = decoded.id;
 
         // Fetch user details
         const userResponse = await axios.get(`http://localhost:1337/api/users/me?populate=*`, {
@@ -72,26 +112,120 @@ export default {
     } else {
       console.warn("No JWT token found. Please log in first.");
     }
+    await this.fetchNotifications();
+    this.startNotificationPolling();
+    document.addEventListener('click', this.handleOutsideClick);
+  },
+  beforeDestroy() {
+    // Clear the polling interval when component is destroyed
+    document.removeEventListener('click', this.handleOutsideClick);
+    clearInterval(this.notificationInterval);
   },
   methods: {
     toggleMenu() {
       this.showMenu = !this.showMenu;
+    },
+    toggleNotificationMenu() {
+      this.showNotificationMenu = !this.showNotificationMenu;
+      if (this.showNotificationMenu) {
+        this.markAllAsRead();
+      }
     },
     logout() {
       localStorage.removeItem("jwt");
       this.$router.push('/');
     },
     getImageUrl(path) {
-      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'car.png';
+      return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'https://via.placeholder.com/150';
     },
     onImageError(event) {
-      event.target.src = 'car.png';
+      event.target.src = 'https://www.gravatar.com/avatar/?d=mp';
     },
     goToCard() {
       this.$router.push('/card');
     },
     goToHistory() {
-      this.$router.push('/history');
+      this.$router.push('/HistoryPage');
+    },
+    async fetchNotifications() {
+      const token = localStorage.getItem("jwt");
+      // console.log(this.userDId);
+      try {
+        const response = await axios.get(`http://localhost:1337/api/notifications?filters[users_permissions_user][documentId][$eq]=${this.userDId}&populate[users_permissions_user][populate]=profilePicture&populate[car][populate]=model_image`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.notifications = response.data.data.map(notification => {
+          const carImageUrl = notification.car
+            ? notification.car.model_image.url
+            : 'https://www.gravatar.com/avatar/?d=mp';
+
+          return {
+            ...notification.attributes,
+            id: notification.id,
+            documentId: notification.documentId,
+            message: notification.message,
+            timestamp: notification.timestamp,
+            read: notification.read,
+            notification_car_image: carImageUrl,
+          };
+        });
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    },
+    startNotificationPolling() {
+      // Poll for new notifications every 30 seconds
+      this.notificationInterval = setInterval(this.fetchNotifications, 1000);
+      this.fetchNotifications(); // Initial fetch
+    },
+    async markAllAsRead() {
+      const token = localStorage.getItem("jwt");
+      try {
+        const unreadNotifications = this.notifications.filter(notification => !notification.read);
+
+        // Update each unread notification to mark it as read
+        const updatePromises = unreadNotifications.map(notification =>
+          axios.put(`http://localhost:1337/api/notifications/${notification.documentId}`, {
+            data: { read: true },
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+        );
+
+        await Promise.all(updatePromises);
+
+        // Update local state
+        this.notifications.forEach(notification => {
+          notification.read = true;
+        });
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    },
+    formatDateTime(timestamp) {
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(timestamp));
+    },
+    handleOutsideClick(event) {
+      const notificationContainer = this.$el.querySelector('.notification-container');
+      const avatarContainer = this.$el.querySelector('.avatar-container');
+
+      if (
+        notificationContainer && !notificationContainer.contains(event.target) &&
+        avatarContainer && !avatarContainer.contains(event.target)
+      ) {
+        this.showMenu = false;
+        this.showNotificationMenu = false;
+      }
     },
   },
 };
@@ -150,29 +284,37 @@ export default {
   color: #E0E0E0;
 }
 
-.avatar {
+/* Avatar and Dropdown Container */
+.avatar-container {
+  position: relative;
   cursor: pointer;
-  width: 25px; /* Match the font size of the icons */
-  height: 25px; /* Match the font size of the icons */
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid gray; /* Match the border style of icons */
-  padding: 10px; /* Match the padding of icons */
 }
 
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid gray;
+  padding: 5px;
+}
 
+/* Dropdown Menu Styling */
 .dropdown-menu {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 120px;
-  right: 20px;
-  width: 220px;
   padding: 10px;
-  background-color: #1e1e1e; /* Dark background */
+  top: 100%;
+  /* Place it directly below the avatar */
+  right: 0;
+  width: 220px;
+  margin-top: 10px;
+  /* Space between avatar and dropdown */
+  background-color: #1e1e1e;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Softer shadow */
-  color: #e0e0e0; /* Light text for readability */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
   z-index: 1000;
   overflow: hidden;
 }
@@ -184,7 +326,7 @@ export default {
   width: 100%;
   padding-top: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #3e3e3e; /* Subtle border between sections */
+  border-bottom: 1px solid #3e3e3e;
 }
 
 .profile-info h3 {
@@ -199,7 +341,7 @@ export default {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 15px;
-  border: 2px solid #3e3e3e; /* Matches the theme */
+  border: 2px solid #3e3e3e;
 }
 
 .menu-item {
@@ -217,18 +359,103 @@ export default {
 }
 
 .menu-item:hover {
-  background-color: #333333; /* Darken on hover */
+  background-color: #333333;
 }
 
 .menu-item font-awesome-icon {
   margin-right: 10px;
-  color: #a0a0a0; /* Icon color */
+  color: #a0a0a0;
 }
 
 hr {
   border: none;
-  border-top: 1px solid #3e3e3e; /* Divider line with theme color */
+  border-top: 1px solid #3e3e3e;
   margin: 0;
 }
 
+/* Notification Styling */
+.notification-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 1px solid #121212;
+}
+
+.notification-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  padding: 10px;
+  border-radius: 8px;
+  width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #444;
+  overflow-y: auto;
+}
+
+.notification-menu h4 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.notification-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.notification-menu li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.notification-menu div {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.notification-menu li:last-child {
+  border-bottom: none;
+}
+
+.notification-menu li:hover {
+  background-color: #333;
+}
+
+.notification-menu .time {
+  font-size: 0.8em;
+  color: #aaa;
+}
+
+.notification-car-img {
+  width: 50px;
+  height: 50px;
+  object-fit: fit;
+  object-position: top;
+  border-radius: 50%;
+  margin-right: 10px;
+}
 </style>
