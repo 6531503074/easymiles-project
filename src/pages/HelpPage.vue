@@ -5,7 +5,7 @@
         <div class="box-container">
         </div>
         <img :src="getImageUrl(this.avatar)" alt="Profile" class="avatar" />
-        <h1 class="name">{{ user.firstName + " " + lastName }}</h1>
+        <h1 class="name">{{ user.firstName + " " + user.lastName }}</h1>
         <div class="line">
             <button class="select-button">
                 <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
