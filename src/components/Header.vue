@@ -11,9 +11,9 @@
       </div>
     </div>
     <nav class="nav-icons" style="color: white;">
-      <a href="/favorite">
+      <!-- <a href="/favorite">
         <font-awesome-icon :icon="['fas', 'heart']" class="icon" />
-      </a>
+      </a> -->
       <!-- Notification Icon -->
       <div class="notification-container" @click.stop="toggleNotificationMenu">
         <font-awesome-icon :icon="['fas', 'bell']" class="icon" />

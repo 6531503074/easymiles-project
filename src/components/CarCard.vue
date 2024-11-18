@@ -3,7 +3,7 @@
     <div>
       <div class="card-header">
         <h4>{{ car.model || 'Unknown Model' }}</h4>
-        <span class="favorite-icon" style="color: gray; font-size: larger;">❤</span>
+        <!-- <span class="favorite-icon" style="color: gray; font-size: larger;">❤</span> -->
       </div>
       <p class="car-type">{{ car.model_type || 'Unknown Type' }}</p>
     </div>
