@@ -44,10 +44,6 @@
           <label for="contact">Contact:</label>
           <input type="text" v-model="user.contact" id="contact" required>
         </div>
-        <div class="input-container">
-          <label for="password">Password:</label>
-          <input type="password" v-model="user.password" id="password" required>
-        </div>
         <div class="button-container">
           <button type="button" @click="cancelEdit" class="cancel-button">Cancel</button>
           <button type="submit" class="save-button">Save</button>

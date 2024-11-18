@@ -42,11 +42,6 @@
                     <font-awesome-icon :icon="['fas', 'location-dot']" class="info-icon" />
                     <ul class="info-text">: 132 Dartmouth Street Boston, Massachusetts 02156 United States</ul>
                 </div>
-                <div class="info-under">
-                    <font-awesome-icon :icon="['fas', 'circle-question']" class="info-icon-under-left" />
-                    <font-awesome-icon :icon="['fas', 'circle-question']" class="info-icon-under-center" />
-                    <font-awesome-icon :icon="['fas', 'circle-question']" class="info-icon-under-right" />
-                </div>
             </div>
         </div>
 
@@ -279,25 +274,5 @@ export default {
     list-style: none;
     padding-left: 15px;
     margin: 0;
-}
-
-.info-under {
-    padding-top: 100px;
-    display: flex;
-}
-
-.info-icon-under-center {
-    margin: auto;
-    font-size: 2rem;
-}
-
-.info-icon-under-right {
-    margin-right: 210px;
-    font-size: 2rem;
-}
-
-.info-icon-under-left {
-    margin-left: 210px;
-    font-size: 2rem;
 }
 </style>
