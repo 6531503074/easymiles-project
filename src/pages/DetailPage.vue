@@ -24,7 +24,7 @@
               <span v-if="car.discountPrice" class="original-price">Before: {{ formatCurrency(car.discountPrice)
                 }}</span>
             </div>
-            <button class="rent-button">Rent Now</button>
+            <button class="rent-button" @click.stop="goToPaymentPage">Rent Now</button>
             <ul class="car-specs">
               <li><strong>Type Car:</strong> {{ car.model_type }}</li>
               <li><strong>Transmission:</strong> {{ car.transmission }}</li>
@@ -143,6 +143,9 @@ export default {
     }
   },
   methods: {
+    goToPaymentPage() {
+      this.$router.push({ name: 'Payment', params: { id: this.car.documentId } });
+    },
     async fetchCarDetails() {
       try {
         const response = await axios.get(`http://localhost:1337/api/cars/${this.id}?populate=*`);
