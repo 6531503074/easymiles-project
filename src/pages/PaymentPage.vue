@@ -111,7 +111,7 @@
             <label>I agree with terms and conditions.</label>
           </div>
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-          <button @click="submitPayment" >Rent Now</button>
+          <button @click="submitPayment">Rent Now</button>
         </div>
       </div>
 
@@ -214,13 +214,13 @@ export default {
     },
     isTimeValid() {
       const { pickupDate, pickupTime, dropoffDate, dropoffTime } = this.rentalInfo;
-      
+
       // Ensure all date and time fields are filled
       if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) return true;
-      
+
       const pickupDateTime = new Date(`${pickupDate}T${pickupTime}`);
       const dropoffDateTime = new Date(`${dropoffDate}T${dropoffTime}`);
-      
+
       return dropoffDateTime > pickupDateTime;
     },
   },
@@ -309,11 +309,56 @@ export default {
       this.errorMessage = '';
       const formattedPickupTime = this.formatTimeToStrapi(this.rentalInfo.pickupTime);
       const formattedDropoffTime = this.formatTimeToStrapi(this.rentalInfo.dropoffTime);
+
       try {
+        // Fetch existing bookings for this car
+        const response = await axios.get(
+          `http://localhost:1337/api/payments?filters[car][id][$eq]=${this.car.id}&populate=*`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const existingBookings = response.data.data.map((booking) => ({
+          pickupDate: new Date(booking.pickupDate),
+          dropoffDate: new Date(booking.dropoffDate),
+          status: booking.booking_status,
+        }));
+
+        // Convert new booking dates to Date objects
+        const newPickupDate = new Date(this.rentalInfo.pickupDate);
+        const newDropoffDate = new Date(this.rentalInfo.dropoffDate);
+
+        // Validate against existing bookings
+        for (const booking of existingBookings) {
+          const { pickupDate, dropoffDate, status } = booking;
+
+          // Skip validation for canceled or failed bookings
+          if (status === "Canceled" || status === "Failed") continue;
+
+          // Adjust blocked start and end dates
+          const blockedStartDate = new Date(pickupDate);
+          blockedStartDate.setDate(blockedStartDate.getDate() - 1); // Extend start by 1 day
+
+          const blockedEndDate = new Date(dropoffDate);
+          blockedEndDate.setDate(blockedEndDate.getDate() + 1); // Extend end by 1 day
+
+          // Ensure new booking does not overlap
+          if (
+            (newPickupDate >= blockedStartDate && newPickupDate <= blockedEndDate) || // Overlaps at start
+            (newDropoffDate >= blockedStartDate && newDropoffDate <= blockedEndDate) || // Overlaps at end
+            (newPickupDate <= blockedStartDate && newDropoffDate >= blockedEndDate) // Fully overlaps
+          ) {
+            this.errorMessage = `This car is unavailable from ${blockedStartDate.toLocaleDateString()} to ${blockedEndDate.toLocaleDateString()}.`;
+            return;
+          }
+        }
+
         const paymentData = {
           data: {
             method: this.paymentInfo.method,
-            payment_status: "Complete",
+            payment_status: "Pending",
             totalPrice: this.totalPrice,
             transactionDate: new Date().toISOString(),
             cardNumber: this.paymentInfo.cardNumber,
