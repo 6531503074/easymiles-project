@@ -7,15 +7,15 @@
         <img :src="getImageUrl(this.avatar)" alt="Profile" class="avatar" />
         <h1 class="name">{{ user.firstName + " " + user.lastName }}</h1>
         <div class="line">
-            <button class="select-button">
+            <button class="select-button" @click="gotoEdit">
                 <font-awesome-icon :icon="['fas', 'pen-to-square']" class="icon" />
                 <h2>Edit profile</h2>
             </button>
-            <button class="select-button">
+            <button class="select-button" @click="gotoSecurity">
                 <font-awesome-icon :icon="['fas', 'lock']" class="icon" />
                 <h2>Security</h2>
             </button>
-            <button class="select-button-active">
+            <button class="select-button-active" @click="gotoHelp">
                 <font-awesome-icon :icon="['fas', 'circle-question']" class="icon-active" />
                 <h2>Help</h2>
             </button>
@@ -79,6 +79,15 @@ export default {
         this.fetchUserProfile(); // ดึงข้อมูลผู้ใช้เมื่อหน้าโหลด
     },
     methods: {
+        gotoEdit() {
+            this.$router.push('/EditProfilePage');
+        },
+        gotoSecurity() {
+            this.$router.push('/SecurityPage');
+        },
+        gotoHelp() {
+            this.$router.push('/HelpPage');
+        },
         getImageUrl(path) {
             return path ? `${import.meta.env.VITE_STRAPI_URL}${path}` : 'car.png';
         },

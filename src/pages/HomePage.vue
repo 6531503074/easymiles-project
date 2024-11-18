@@ -7,7 +7,7 @@
         <div>
           <h2>The Best Platform for Car Rental</h2>
           <p>Ease of doing a car rental safely and reliably. Of course, at a low price.</p>
-          <button class="btn-rental">Rental Car</button>
+          <button class="btn-rental" @click="gotoCategory">Rental Car</button>
         </div>
         <img src="@/assets/car1.png" alt="Car Image" />
       </div>
@@ -15,7 +15,7 @@
         <div>
           <h2>Easy way to rent a car at a low price</h2>
           <p>Providing cheap car rental services and safe and comfortable facilities.</p>
-          <button class="btn-rental">Rental Car</button>
+          <button class="btn-rental" @click="gotoCategory">Rental Car</button>
         </div>
         <img src="@/assets/car2.png" alt="Car Image" />
       </div>
@@ -92,6 +92,9 @@ export default {
     window.removeEventListener('resize', this.updateCarsPerRow);
   },
   methods: {
+    gotoCategory() {
+      this.$router.push('/category');
+    },
     async fetchCarData() {
       try {
         const response = await axios.get('http://localhost:1337/api/cars?populate=*');

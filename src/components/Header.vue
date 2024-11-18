@@ -43,7 +43,7 @@
             <h3>{{ userName }}</h3>
           </div>
           <hr />
-          <div class="menu-item" @click="goToCard">
+          <div class="menu-item" @click="goToSetting">
             <font-awesome-icon :icon="['fas', 'gear']" /> Setting
           </div>
           <div class="menu-item" @click="goToHistory">
@@ -141,8 +141,8 @@ export default {
     onImageError(event) {
       event.target.src = 'https://www.gravatar.com/avatar/?d=mp';
     },
-    goToCard() {
-      this.$router.push('/card');
+    goToSetting() {
+      this.$router.push('/EditProfilePage');
     },
     goToHistory() {
       this.$router.push('/HistoryPage');
